@@ -1,0 +1,19 @@
+import { Text } from '@/components/ui/text';
+import { LoginForm } from '@/features/auth/login/components/login-form';
+import { useLogin } from '@/features/auth/login/hooks/use-login';
+import { Link } from 'expo-router';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+
+export default function LoginScreen() {
+  const { mutate, isPending } = useLogin();
+
+  return (
+    <KeyboardAwareScrollView contentContainerClassName="flex-1 p-2 justify-center items-center gap-y-5">
+      <Text variant={'h1'}>Login Screen</Text>
+      <LoginForm handleSumit={mutate} isSubmitting={isPending} className="w-full max-w-lg" />
+
+
+      <Link href={'/(auth)/register'} className='underline text-blue-500'>Register Here</Link>
+    </KeyboardAwareScrollView>
+  );
+}
