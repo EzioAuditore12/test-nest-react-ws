@@ -10,6 +10,7 @@ import { UserModule } from './user/user.module';
 
 import { typeOrmConfig } from './configs/db/typeorm.config';
 import { mongooseConfig } from './configs/db/mongoose.config';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { mongooseConfig } from './configs/db/mongoose.config';
     MongooseModule.forRoot(mongooseConfig.uri!),
     UserModule,
     AuthModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -36,6 +36,10 @@ export default function HomeScreen() {
         <Link href={'/(main)/search'} className="dark:text-white">
           Search
         </Link>
+
+        <Link href={'/(main)/chat'} className="dark:text-white">
+          Chat
+        </Link>
       </View>
     </>
   );

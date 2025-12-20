@@ -1,7 +1,7 @@
 import { FlashList, type FlashListProps } from '@shopify/flash-list';
 import { router } from 'expo-router';
 
-import type { User } from '../schemas/user.schema';
+import type { User } from '../../auth/common/schemas/user.schema';
 import { UserCard } from './user-card';
 
 interface UserListProps extends Omit<
