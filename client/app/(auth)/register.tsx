@@ -13,7 +13,9 @@ export default function RegisterScreen() {
 
       <RegisterForm handleSumit={mutate} isSubmitting={isPending} className="w-full max-w-lg" />
 
-      <Link href={'/(auth)/login'} className='underline text-blue-500'>Login Here</Link>
+      <Link href={'/(auth)/login'} className="text-blue-500 underline">
+        Login Here
+      </Link>
     </KeyboardAwareScrollView>
   );
 }

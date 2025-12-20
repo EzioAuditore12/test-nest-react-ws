@@ -12,8 +12,9 @@ export default function LoginScreen() {
       <Text variant={'h1'}>Login Screen</Text>
       <LoginForm handleSumit={mutate} isSubmitting={isPending} className="w-full max-w-lg" />
 
-
-      <Link href={'/(auth)/register'} className='underline text-blue-500'>Register Here</Link>
+      <Link href={'/(auth)/register'} className="text-blue-500 underline">
+        Register Here
+      </Link>
     </KeyboardAwareScrollView>
   );
 }

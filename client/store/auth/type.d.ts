@@ -6,5 +6,5 @@ export interface AuthStoreType {
   tokens: Tokens | null;
   setUserDetail: (data: User) => void;
   setTokens: (data: Tokens) => void;
-  logout: ()=> void
+  logout: () => void;
 }

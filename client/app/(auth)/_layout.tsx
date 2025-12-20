@@ -3,10 +3,9 @@ import { Redirect, Stack } from 'expo-router';
 import { useAuthStore } from '@/store/auth';
 
 export default function AuthScreensLayout() {
+  const tokens = useAuthStore((state) => state.tokens);
 
-    const tokens = useAuthStore(state=> state.tokens)
-
-    if(tokens) return <Redirect href={'/(main)'}/>
+  if (tokens) return <Redirect href={'/(main)'} />;
 
   return (
     <Stack initialRouteName="login">
