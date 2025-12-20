@@ -1,26 +1,42 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { PaginateQuery, PaginationType, paginate } from 'nestjs-paginate';
+
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+  ) {}
+
+  async create(createUserDto: CreateUserDto) {
+    const user = this.userRepository.create(createUserDto);
+    return await this.userRepository.save(user);
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findOne(id: string) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    return user;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOneByUserName(username: string) {
+    const user = await this.userRepository.findOne({ where: { username } });
+    return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async findAll(query: PaginateQuery) {
+    return await paginate(query, this.userRepository, {
+      sortableColumns: ['username', 'name'],
+      nullSort: 'last',
+      defaultSortBy: [['id', 'DESC']],
+      searchableColumns: ['username', 'name'],
+      select: ['id', 'username', 'name', 'createdAt', 'updatedAt'],
+      defaultLimit: 10,
+      maxLimit: 30,
+      paginationType: PaginationType.LIMIT_AND_OFFSET,
+    });
   }
 }
