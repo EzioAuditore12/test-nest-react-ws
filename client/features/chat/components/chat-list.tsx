@@ -39,7 +39,7 @@ function MessageItem({ data, className, ...props }: MessageProps) {
 export function ChatList({ className, data }: ChatListProps) {
   return (
     <FlatList
-      className={cn('p-2',className)}
+      className={cn('p-2', className)}
       inverted
       onStartReachedThreshold={0.5}
       data={data}
