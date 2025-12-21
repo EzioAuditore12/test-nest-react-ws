@@ -7,11 +7,13 @@ import app from "./app";
 interface ServerToClientEvents {
   welcome: (message: string) => void;
   roomNotice: (username: string) => void;
+  chatMessage: (data: { text: string; sender: string }) => void;
 }
 
 interface ClientToServerEvents {
   joinRoom: (username: string) => void;
-  chatMessage: (message: string) => void;
+  // Change this to accept an object
+  chatMessage: (data: { text: string; sender: string }) => void;
 }
 
 const server = createServer(app);
@@ -41,9 +43,10 @@ io.on(
       socket.to(ROOM_NAME).emit("roomNotice", username);
     });
 
-    socket.on("chatMessage", (message) => {
-      console.log(message);
-      socket.to(ROOM_NAME).emit("chatMessage", message); // <--- emit "chatMessage"
+    socket.on("chatMessage", (data) => {
+      console.log(data);
+      // Broadcast the full data object (text + sender)
+      socket.to(ROOM_NAME).emit("chatMessage", data);
     });
   }
 );
