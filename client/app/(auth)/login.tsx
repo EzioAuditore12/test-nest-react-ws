@@ -15,6 +15,14 @@ export default function LoginScreen() {
       <Link href={'/(auth)/register'} className="text-blue-500 underline">
         Register Here
       </Link>
+
+      <Link href={'/(auth)/forgot-password'} className="text-blue-500 underline">
+        Forgot Password
+      </Link>
+
+      <Link href={'/(auth)/test'} className="text-blue-500 underline">
+        Test
+      </Link>
     </KeyboardAwareScrollView>
   );
 }
