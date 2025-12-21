@@ -6,23 +6,11 @@ import { USER_TABLE_NAME } from '../tables/user.table';
 export class User extends Model {
   static table = USER_TABLE_NAME;
 
-  @text('first_name')
-  firstName!: string;
+  @text('name')
+  name!: string;
 
-  @text('middle_name')
-  middleName!: string | null;
-
-  @text('last_name')
-  lastName!: string;
-
-  @text('phone_number')
-  phoneNumer!: string;
-
-  @text('email')
-  email!: string | null;
-
-  @text('avatar')
-  avatar!: string | null;
+  @text('username')
+  username!: string;
 
   @date('updated_at')
   createdAt!: Date;

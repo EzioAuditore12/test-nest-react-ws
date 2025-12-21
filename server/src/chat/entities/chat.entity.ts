@@ -1,1 +1,23 @@
-export class Chat {}
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
+
+@Schema({ timestamps: true })
+export class Chat {
+  @Prop({ required: true })
+  senderId: string;
+
+  @Prop({ required: true })
+  receiverId: string;
+
+  @Prop({ type: String, maxLength: 1000, trim: true })
+  text: string;
+
+  @Prop({ type: Boolean, default: false })
+  delivered: boolean;
+
+  @Prop({ type: Boolean, default: false })
+  seen: boolean;
+}
+
+export const ChatSchema = SchemaFactory.createForClass(Chat);
+export type ChatDocument = HydratedDocument<Chat>;

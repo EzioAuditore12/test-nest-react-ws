@@ -1,26 +1,40 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { plainToInstance } from 'class-transformer';
+
+import { Chat, ChatDocument } from './entities/chat.entity';
+
+import { ChatDto } from './dto/chat.dto';
+
 import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
+
+import { UserService } from 'src/user/user.service';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class ChatService {
-  create(createChatDto: CreateChatDto) {
-    return 'This action adds a new chat';
-  }
+  constructor(
+    @InjectModel(Chat.name)
+    private readonly chatModel: Model<ChatDocument>,
+    private readonly userService: UserService,
+  ) {}
 
-  findAll() {
-    return `This action returns all chat`;
-  }
+  async create(createChatDto: CreateChatDto): Promise<ChatDto> {
+    const { receiverId, text, senderId } = createChatDto;
 
-  findOne(id: number) {
-    return `This action returns a #${id} chat`;
-  }
+    const existingUser = await this.userService.findOne(receiverId);
 
-  update(id: number, updateChatDto: UpdateChatDto) {
-    return `This action updates a #${id} chat`;
-  }
+    if (!existingUser)
+      throw new NotFoundException('User with this id does not exist');
 
-  remove(id: number) {
-    return `This action removes a #${id} chat`;
+    const createdMessage = await this.chatModel.create({
+      senderId,
+      receiverId,
+      text,
+    });
+
+    return plainToInstance(ChatDto, createdMessage, {
+      excludeExtraneousValues: true,
+    });
   }
 }

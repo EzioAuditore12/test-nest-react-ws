@@ -1,13 +1,14 @@
-import { View, type ViewProps } from 'react-native';
+import type { ComponentProps } from 'react';
 
 import { cn } from '@/lib/utils';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Text } from '@/components/ui/text';
+import { Card, CardContent } from '@/components/ui/card';
 
-import type { User } from '../schemas/user.schema';
+import type { User } from '@/features/auth/common/schemas/user.schema';
 
-interface UserProfileProps extends ViewProps {
+interface UserProfileProps extends ComponentProps<typeof Card> {
   data?: User;
 }
 
@@ -17,29 +18,19 @@ export function UserProfile({ className, data, ...props }: UserProfileProps) {
   const { createdAt, name, id, username } = data;
 
   return (
-    <View
-      key={id}
-      className={cn(
-        'flex flex-col items-center space-y-4 rounded-2xl bg-white p-6 shadow-lg',
-        className
-      )}
-      {...props}>
-      <Avatar className="size-48" alt={name}>
-        <AvatarImage src={''} />
-        <AvatarFallback>
-          <Text>{name[0]} </Text>
-        </AvatarFallback>
-      </Avatar>
-      <Text variant={'h3'} className="text-center">
-        {name}
-      </Text>
-      <Text variant={'large'} className="text-center text-gray-700">
-        {username}
-      </Text>
+    <Card key={id} className={cn(className)} {...props}>
+      <CardContent className="items-center gap-y-4">
+        <Avatar className="size-48" alt={name}>
+          <AvatarImage src={''} />
+          <AvatarFallback>
+            <Text>{name[0]} </Text>
+          </AvatarFallback>
+        </Avatar>
+        <Text variant={'h3'}>Name: {name}</Text>
+        <Text variant={'large'}>Username: {username}</Text>
 
-      <Text variant={'small'} className="mt-2 text-center text-gray-500">
-        Joined: {new Date(createdAt).toLocaleDateString()}
-      </Text>
-    </View>
+        <Text variant={'small'}>Joined: {new Date(createdAt).toLocaleDateString()}</Text>
+      </CardContent>
+    </Card>
   );
 }
