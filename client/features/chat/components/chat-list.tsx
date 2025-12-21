@@ -18,14 +18,17 @@ function MessageItem({ data, className, ...props }: MessageProps) {
 
   return (
     <View
-      className="my-1 max-w-[80%] rounded-lg bg-gray-200 p-3"
-      style={{
-        alignSelf: sender === 'SELF' ? 'flex-end' : 'flex-start',
-        backgroundColor: sender === 'SELF' ? 'blue' : '#e5e7eb',
-      }}
+      className={cn(
+        'my-1 max-w-xs rounded-xl p-3',
+        sender === 'SELF' ? 'self-end' : 'self-start',
+        sender === 'SELF' ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700',
+        className
+      )}
       {...props}>
-      <Text style={{ color: sender === 'SELF' ? 'white' : 'black' }}>{text}</Text>
-      {sender === 'OTHER' && <Text className="mt-2 bg-gray-200">{user.name}</Text>}
+      <Text className={sender === 'SELF' ? 'text-white' : 'text-black dark:text-white'}>
+        {text}
+      </Text>
+      {sender === 'OTHER' && <Text className="mt-2 font-bold">{user.name}</Text>}
       <Text
         variant={'small'}
         style={{

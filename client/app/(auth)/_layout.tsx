@@ -11,7 +11,6 @@ export default function AuthScreensLayout() {
     <Stack initialRouteName="login">
       <Stack.Screen name="login" options={{ headerShown: false }} />
       <Stack.Screen name="register" options={{ headerShown: false }} />
-      <Stack.Screen name="forgot-password" />
       <Stack.Screen name="test" />
     </Stack>
   );

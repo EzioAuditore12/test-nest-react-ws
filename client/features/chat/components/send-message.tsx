@@ -59,7 +59,7 @@ export function SendMessage({ className, onTyping, handleSubmit, ...props }: Sen
 
   return (
     <View
-      className={cn('border-t border-gray-200 bg-white', className)}
+      className={cn('border-t-2 border-gray-400', className)}
       {...props}>
       <View className="flex-row items-center p-2">
         <Controller
