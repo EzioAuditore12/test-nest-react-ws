@@ -32,22 +32,21 @@ export default function ChatScreen() {
         console.log(`${username} joined to group`);
       });
 
-      socket.current?.on('chatMessage', (message) => {
+      socket.current?.on('chatMessage', (data) => {
         const receivedMessage: Message = {
           id: String(Math.round(Math.random() * 1000000)),
           sender: 'OTHER',
           createdAt: new Date(),
-          text: message,
+          text: data.text, // Use text from data
           user: {
             id: 'ads',
-            name: 'asd',
+            name: data.sender, // Use sender name from data
             createdAt: 'dasasd',
             updatedAt: 'asdasd',
-            username: 'asd',
+            username: data.sender,
           },
         };
 
-        // FIX: Put received message at the START of the array
         setMessages((prev) => [receivedMessage, ...prev]);
       });
     });
@@ -64,14 +63,15 @@ export default function ChatScreen() {
       sender: 'SELF',
       user: {
         id: CURRENT_USER_ID,
-        name: 'Me',
-        username: 'me',
+        name: user?.name || 'Me',
+        username: user?.username || 'me',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
     };
 
-    socket.current?.emit('chatMessage', newMessage.text);
+    // Send object with text AND sender name
+    socket.current?.emit('chatMessage', { text: newMessage.text, sender: newMessage.user.name });
 
     setMessages((previousMessages) => [newMessage, ...previousMessages]);
   };

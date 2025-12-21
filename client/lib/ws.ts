@@ -10,7 +10,7 @@ interface events {
   connect: string;
   joinRoom: (username: string | undefined) => void;
   roomNotice: (username: string | undefined) => void;
-  chatMessage: (message: string) => void;
+  chatMessage: ({ text, sender }: { text: string; sender: string }) => void;
 }
 
 export type Socket = SocketType<events>;

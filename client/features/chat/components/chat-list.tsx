@@ -14,7 +14,7 @@ interface MessageProps extends ViewProps {
 }
 
 function MessageItem({ data, className, ...props }: MessageProps) {
-  const { sender, text, createdAt } = data;
+  const { sender, text, createdAt, user } = data;
 
   return (
     <View
@@ -25,6 +25,7 @@ function MessageItem({ data, className, ...props }: MessageProps) {
       }}
       {...props}>
       <Text style={{ color: sender === 'SELF' ? 'white' : 'black' }}>{text}</Text>
+      {sender === 'OTHER' && <Text className="mt-2 bg-gray-200">{user.name}</Text>}
       <Text
         variant={'small'}
         style={{
