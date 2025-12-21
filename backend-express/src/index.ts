@@ -8,12 +8,14 @@ interface ServerToClientEvents {
   welcome: (message: string) => void;
   roomNotice: (username: string) => void;
   chatMessage: (data: { text: string; sender: string }) => void;
+  typing: (username: string) => void;
 }
 
 interface ClientToServerEvents {
   joinRoom: (username: string) => void;
   // Change this to accept an object
   chatMessage: (data: { text: string; sender: string }) => void;
+  typing: (username: string) => void;
 }
 
 const server = createServer(app);
@@ -47,6 +49,10 @@ io.on(
       console.log(data);
       // Broadcast the full data object (text + sender)
       socket.to(ROOM_NAME).emit("chatMessage", data);
+    });
+
+    socket.on("typing", (username) => {
+      socket.to(ROOM_NAME).emit("typing", username);
     });
   }
 );

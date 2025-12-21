@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
 
+import { Text } from '@/components/ui/text';
+
 import { connectWebSocket, type Socket } from '@/lib/ws';
 
 import { ChatList } from '@/features/chat/components/chat-list';
@@ -10,15 +12,15 @@ import { ChatList } from '@/features/chat/components/chat-list';
 import { SendMessage } from '@/features/chat/components/send-message';
 
 import type { Message } from '@/features/chat/schemas/message.schema';
-import { useAuthStore } from '@/store/auth';
 
-const CURRENT_USER_ID = '1';
+import { useAuthStore } from '@/store/auth';
 
 export default function ChatScreen() {
   const user = useAuthStore((state) => state.user);
+  const insets = useSafeAreaInsets();
 
   const [messages, setMessages] = useState<Message[] | []>([]);
-  const insets = useSafeAreaInsets();
+  const [typers, setTypers] = useState<(string | undefined)[]>([]);
 
   const socket = useRef<Socket | null>(null);
 
@@ -37,19 +39,40 @@ export default function ChatScreen() {
           id: String(Math.round(Math.random() * 1000000)),
           sender: 'OTHER',
           createdAt: new Date(),
-          text: data.text, // Use text from data
+          text: data.text,
           user: {
-            id: 'ads',
-            name: data.sender, // Use sender name from data
-            createdAt: 'dasasd',
-            updatedAt: 'asdasd',
+            id: String(Math.round(Math.random() * 1000000)),
+            name: data.sender,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
             username: data.sender,
           },
         };
 
         setMessages((prev) => [receivedMessage, ...prev]);
       });
+
+      socket.current?.on('typing', (username) => {
+        if (!username) return;
+
+        setTypers((prev) => {
+          if (prev.includes(username)) return prev;
+          return [...prev, username];
+        });
+
+        // Remove typer after 3 seconds
+        setTimeout(() => {
+          setTypers((prev) => prev.filter((u) => u !== username));
+        }, 3000);
+      });
     });
+
+    return () => {
+      socket.current?.off('connect');
+      socket.current?.off('roomNotice');
+      socket.current?.off('chatMessage');
+      socket.current?.off('typing');
+    };
   }, [user?.name]);
 
   const onSend = (data: { text: string }) => {
@@ -62,7 +85,7 @@ export default function ChatScreen() {
       createdAt: new Date(),
       sender: 'SELF',
       user: {
-        id: CURRENT_USER_ID,
+        id: String(Math.round(Math.random() * 1000000)),
         name: user?.name || 'Me',
         username: user?.username || 'me',
         createdAt: new Date().toISOString(),
@@ -78,11 +101,23 @@ export default function ChatScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ headerTitle: 'Group Chat' }} />
+      <Stack.Screen
+        options={{
+          headerTitle: 'Group Chat',
+          headerRight: () => (
+            <Text className="text-xs text-gray-500">
+              {typers.length > 0 && `${typers.join(', ')} is typing...`}
+            </Text>
+          ),
+        }}
+      />
       <View className="flex-1 bg-white" style={{ paddingBottom: insets.bottom }}>
         <ChatList data={messages} />
 
-        <SendMessage handleSubmit={onSend} />
+        <SendMessage
+          handleSubmit={onSend}
+          onTyping={() => socket.current?.emit('typing', user?.username)}
+        />
       </View>
     </>
   );

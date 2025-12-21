@@ -11,6 +11,7 @@ interface events {
   joinRoom: (username: string | undefined) => void;
   roomNotice: (username: string | undefined) => void;
   chatMessage: ({ text, sender }: { text: string; sender: string }) => void;
+  typing: (username: string | undefined) => void;
 }
 
 export type Socket = SocketType<events>;

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { View, type ViewProps } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
@@ -16,12 +17,14 @@ import { Text } from '@/components/ui/text';
 
 interface SendMessageProps extends ViewProps {
   handleSubmit: (data: SendMessageParam) => void;
+  onTyping?: () => void;
 }
 
-export function SendMessage({ className, handleSubmit, ...props }: SendMessageProps) {
+export function SendMessage({ className, onTyping, handleSubmit, ...props }: SendMessageProps) {
   const {
     control,
     reset,
+    watch,
     handleSubmit: handlFormSubmit,
   } = useForm<SendMessageParam>({
     defaultValues: {
@@ -29,6 +32,14 @@ export function SendMessage({ className, handleSubmit, ...props }: SendMessagePr
     },
     resolver: arktypeResolver(sendMessageParamSchema),
   });
+
+  const change = watch(['text']);
+
+  useEffect(() => {
+    if (change && onTyping) {
+      onTyping();
+    }
+  }, [change, onTyping]);
 
   const onSubmit = (data: SendMessageParam) => {
     reset();
@@ -48,6 +59,7 @@ export function SendMessage({ className, handleSubmit, ...props }: SendMessagePr
             <Input
               className="mr-2 flex-1"
               placeholder="Type a message..."
+              onBlur={onBlur}
               value={value}
               onChangeText={onChange}
             />
