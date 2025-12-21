@@ -31,8 +31,6 @@ export function SendMessage({ className, handleSubmit, ...props }: SendMessagePr
   });
 
   const onSubmit = (data: SendMessageParam) => {
-    console.log(data);
-
     reset();
 
     handleSubmit(data);

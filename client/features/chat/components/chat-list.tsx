@@ -6,7 +6,7 @@ import type { Message } from '../schemas/message.schema';
 import { Text } from '@/components/ui/text';
 
 interface ChatListProps extends Omit<FlatListProps<Message>, 'data' | 'inverted' | 'renderItem'> {
-  data: Message[];
+  data: Message[] | [];
 }
 
 interface MessageProps extends ViewProps {
