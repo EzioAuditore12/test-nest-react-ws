@@ -1,11 +1,14 @@
-import { View, type ViewProps, FlatList, type FlatListProps } from 'react-native';
+import { View, type ViewProps } from 'react-native';
+
+import { FlashList, FlashListProps } from '@shopify/flash-list';
 
 import { cn } from '@/lib/utils';
 
 import type { Message } from '../schemas/message.schema';
 import { Text } from '@/components/ui/text';
+import { useMemo } from 'react';
 
-interface ChatListProps extends Omit<FlatListProps<Message>, 'data' | 'inverted' | 'renderItem'> {
+interface ChatListProps extends Omit<FlashListProps<Message>, 'data' | 'renderItem'> {
   data: Message[] | [];
 }
 
@@ -41,12 +44,17 @@ function MessageItem({ data, className, ...props }: MessageProps) {
 }
 
 export function ChatList({ className, data }: ChatListProps) {
+  const reversedMessages = useMemo(() => [...data].reverse(), [data]);
+
   return (
-    <FlatList
+    <FlashList
+      data={reversedMessages}
       className={cn('p-2', className)}
-      inverted
+      maintainVisibleContentPosition={{
+        autoscrollToBottomThreshold: 0.2,
+        startRenderingFromBottom: true,
+      }}
       onStartReachedThreshold={0.5}
-      data={data}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => <MessageItem data={item} />}
       contentContainerStyle={{ paddingBottom: 20 }}
