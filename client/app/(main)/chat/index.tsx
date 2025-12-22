@@ -1,6 +1,5 @@
 import { View } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
 
 import { Text } from '@/components/ui/text';
@@ -17,7 +16,6 @@ import { useAuthStore } from '@/store/auth';
 
 export default function ChatScreen() {
   const user = useAuthStore((state) => state.user);
-  const insets = useSafeAreaInsets();
 
   const [messages, setMessages] = useState<Message[] | []>([]);
   const [typers, setTypers] = useState<(string | undefined)[]>([]);
@@ -111,13 +109,10 @@ export default function ChatScreen() {
           ),
         }}
       />
-      <View className="flex-1 bg-white" style={{ paddingBottom: insets.bottom }}>
+      <View className="flex-1">
         <ChatList data={messages} />
 
-        <SendMessage
-          handleSubmit={onSend}
-          onTyping={() => socket.current?.emit('typing', user?.username)}
-        />
+        <SendMessage handleSubmit={onSend} />
       </View>
     </>
   );

@@ -58,9 +58,7 @@ export function SendMessage({ className, onTyping, handleSubmit, ...props }: Sen
   };
 
   return (
-    <View
-      className={cn('border-t-2 border-gray-400', className)}
-      {...props}>
+    <View className={cn('border-t-2 border-gray-400', className)} {...props}>
       <View className="flex-row items-center p-2">
         <Controller
           control={control}
@@ -75,7 +73,7 @@ export function SendMessage({ className, onTyping, handleSubmit, ...props }: Sen
               textAlignVertical="top"
               multiline
               numberOfLines={8}
-              maxLength={2}
+              maxLength={1000}
             />
           )}
         />
