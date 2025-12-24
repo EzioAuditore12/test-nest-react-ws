@@ -7,6 +7,8 @@ import { useAuthStore } from '@/store/auth';
 export function connectWebSocket() {
   const accessToken = useAuthStore.getState().tokens?.accessToken;
 
+  console.log(accessToken)
+
   if (!accessToken) {
     throw new Error('No access token available');
   }
@@ -14,13 +16,13 @@ export function connectWebSocket() {
   const socket = io(env.SOCKET_URL, {
     transports: ['websocket'],
     auth: {
-      token: accessToken, // ✅ THIS is what your WsJwtStrategy reads
+      token: accessToken, 
     },
     autoConnect: true,
   });
 
   socket.on('connect_error', (err) => {
-    console.log('❌ WS connect error:', err.message);
+    console.log('❌ WS connect error:', err);
   });
 
   return socket;
