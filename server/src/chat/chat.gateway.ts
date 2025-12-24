@@ -1,21 +1,39 @@
-import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
+import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  OnGatewayInit,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
+import { Socket, Server } from 'socket.io';
 
 import { ChatService } from './chat.service';
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
+import { WsJwtGuard } from 'src/auth/guards/ws-jwt.guard';
+import type { AuthenticatedSocket } from 'src/auth/types/auth-jwt.payload';
 
+@UseGuards(WsJwtGuard)
 @WebSocketGateway({
   cors: {
     origin: '*',
   },
 })
-export class ChatGateway {
+export class ChatGateway
+  implements OnGatewayInit, OnGatewayDisconnect, OnGatewayConnection
+{
+  @WebSocketServer() server: Server;
+
   ROOM_NAME = 'GROUP';
 
   constructor(private readonly chatService: ChatService) {}
 
-  handleConnection(conn: { id: string }) {
-    Logger.log('Client has been connected', conn.id);
+  afterInit(): void {
+    Logger.log('Init');
+  }
+
+  handleConnection(client: Socket) {
+    Logger.log('Client has been connected', client.id);
   }
 
   handleDisconnect() {
@@ -23,8 +41,12 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('joinRoom')
-  async handleJoinRoom(client: Socket, username: string) {
+  async handleJoinRoom(client: AuthenticatedSocket, username: string) {
     Logger.log(`${username} joining the room`);
+
+    const id = client.handshake.user.id;
+
+    Logger.log('user with id joiing room ', id);
 
     await client.join(this.ROOM_NAME);
 

@@ -2,8 +2,28 @@ import { io, type Socket as SocketType } from 'socket.io-client';
 
 import { env } from '@/env';
 
+import { useAuthStore } from '@/store/auth';
+
 export function connectWebSocket() {
-  return io(env.SOCKET_URL);
+  const accessToken = useAuthStore.getState().tokens?.accessToken;
+
+  if (!accessToken) {
+    throw new Error('No access token available');
+  }
+
+  const socket = io(env.SOCKET_URL, {
+    transports: ['websocket'],
+    auth: {
+      token: accessToken, // ✅ THIS is what your WsJwtStrategy reads
+    },
+    autoConnect: true,
+  });
+
+  socket.on('connect_error', (err) => {
+    console.log('❌ WS connect error:', err.message);
+  });
+
+  return socket;
 }
 
 interface events {
