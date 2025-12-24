@@ -24,6 +24,7 @@ export const useCreateChat = () => {
       });
 
       const savedConversation = await conversationRepository.create({
+        id: data._id,
         contact: savedReceiver.name,
         userId: savedReceiver.id,
         createdAt: new Date(data.createdAt),
@@ -40,9 +41,6 @@ export const useCreateChat = () => {
         createdAt: new Date(data.createdAt),
         updatedAt: new Date(data.createdAt),
       });
-
-      
-
     },
     onError: (error) => {
       alert(error);

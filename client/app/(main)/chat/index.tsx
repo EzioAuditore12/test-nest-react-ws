@@ -107,6 +107,7 @@ export default function ChatScreen() {
               {typers.length > 0 && `${typers.join(', ')} is typing...`}
             </Text>
           ),
+          animation: 'none',
         }}
       />
       <View className="flex-1">

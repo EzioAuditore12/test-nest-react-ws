@@ -1,8 +1,9 @@
 import { type } from 'arktype';
 
-import { phoneSchema } from '@/lib/schemas';
+import { objectIdSchema, phoneSchema } from '@/lib/schemas';
 
 export const createConversationParamSchema = type({
+  id: objectIdSchema,
   userId: 'string.uuid',
   contact: phoneSchema,
   createdAt: 'Date',
