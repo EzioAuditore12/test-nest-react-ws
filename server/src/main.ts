@@ -4,6 +4,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { ValidationPipe } from '@nestjs/common';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 import { AppModule } from './app.module';
 
@@ -24,6 +25,8 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(process.env.PORT!);
+  app.useWebSocketAdapter(new IoAdapter(app));
+
+  await app.listen(process.env.PORT!, '0.0.0.0');
 }
 void bootstrap();
