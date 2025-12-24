@@ -19,6 +19,8 @@ export interface AuthenticatedSocket extends Socket {
   };
 }
 
+export type SocketError = Error & { data: { status: number } };
+
 export interface RefreshTokenStratergyReqParameters {
   user: { id: string; refreshToken: string; issuedAt: Date; expiredAt: Date };
 }

@@ -7,12 +7,14 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { Logger } from '@nestjs/common'; // Removed UseGuards
+import { Logger, UnauthorizedException, UseGuards } from '@nestjs/common'; // Removed UseGuards
 import { JwtService } from '@nestjs/jwt';
 import type {
   AuthenticatedSocket,
   AuthJwtPayload,
+  SocketError,
 } from 'src/auth/types/auth-jwt.payload';
+import { WsJwtGuard } from 'src/auth/guards/ws-jwt.guard';
 
 // 1. REMOVE @UseGuards(WsJwtGuard)
 @WebSocketGateway()
@@ -31,19 +33,27 @@ export class ChatGateway
       const token = socket.handshake.auth.token as string;
 
       if (!token) {
-        return next(new Error('Authentication error: No token provided'));
+        // Fix 1: Create a standard Error
+        const err = new Error('Token is needed') as SocketError;
+        // Fix 2: Attach the status manually so client can read err.data.status
+        err.data = { status: 401 };
+        // Fix 3: Pass it to next(), don't just return it
+        return next(err);
       }
 
       try {
         const payload: AuthJwtPayload = this.jwtService.verify(token);
 
-        // We attach the user here. Since the socket object persists,
-        // this data will be available in all SubscribeMessage handlers.
         socket.handshake.user = { id: payload.sub };
 
         next();
       } catch {
-        next(new Error('Authentication error: Token expired or invalid'));
+        // Fix 4: Same here for invalid tokens
+        const err = new Error('Token is needed') as SocketError;
+        // Fix 2: Attach the status manually so client can read err.data.status
+        err.data = { status: 401 };
+        // Fix 3: Pass it to next(), don't just return it
+        return next(err);
       }
     });
   }
@@ -56,6 +66,7 @@ export class ChatGateway
     Logger.log('client has been disconnected');
   }
 
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('joinRoom')
   async handleJoinRoom(client: AuthenticatedSocket, username: string) {
     // 3. You can still access the user because the Middleware attached it!

@@ -3,11 +3,14 @@ import { io, type Socket as SocketType } from 'socket.io-client';
 import { env } from '@/env';
 
 import { useAuthStore } from '@/store/auth';
+import { refreshAccessToken } from './token-manager'; // Import the shared logic
+
+type SocketError = Error & { data?: { status: number } };
 
 export function connectWebSocket() {
   const accessToken = useAuthStore.getState().tokens?.accessToken;
 
-  console.log(accessToken)
+  console.log(accessToken);
 
   if (!accessToken) {
     throw new Error('No access token available');
@@ -16,13 +19,40 @@ export function connectWebSocket() {
   const socket = io(env.SOCKET_URL, {
     transports: ['websocket'],
     auth: {
-      token: accessToken, 
+      token: accessToken,
     },
     autoConnect: true,
   });
 
-  socket.on('connect_error', (err) => {
-    console.log('❌ WS connect error:', err);
+  socket.on('connect_error', async (err: SocketError) => {
+    console.log('❌ WS connect error:', err.message);
+
+    // Check for the custom status we added on the server
+    if (err.data?.status === 401) {
+      console.log('🔄 Token expired. Attempting refresh...');
+
+      try {
+        // 1. Wait for the shared refresh logic to complete
+        await refreshAccessToken();
+
+        // 2. Get the new token
+        const newAccessToken = useAuthStore.getState().tokens?.accessToken;
+
+        if (newAccessToken) {
+          console.log('✅ Token refreshed. Reconnecting socket...');
+
+          // 3. Update the socket's auth object
+          socket.auth = { token: newAccessToken };
+
+          // 4. Manually reconnect
+          socket.connect();
+        }
+      } catch (refreshError) {
+        console.error('❌ Token refresh failed. Disconnecting.', refreshError);
+        socket.disconnect();
+        // Optional: Redirect to login or handle logout here if not handled in token-manager
+      }
+    }
   });
 
   return socket;
