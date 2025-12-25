@@ -1,8 +1,12 @@
-import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 
 import { Text } from '@/components/ui/text';
-import { Button } from '@/components/ui/button';
+
+import { ChatList } from '@/features/chat/components/chat-list';
+import { SendFirstMessage } from '@/features/chat/components/send-message';
+
+import { useCreateChat } from '@/features/chat/hooks/use-create-chat';
 
 export default function DirectChatScreen() {
   const { id, name, type } = useLocalSearchParams() as unknown as {
@@ -11,21 +15,17 @@ export default function DirectChatScreen() {
     type: 'NEW' | 'OLD';
   };
 
+  const { mutate } = useCreateChat();
+
   if (type === 'NEW')
     return (
-      <View className="flex-1 items-center justify-center">
-        <Text>{id} New Chat</Text>
-
-        <Button
-          onPress={() =>
-            router.replace({
-              pathname: '/(main)/chat/[id]',
-              params: { id, name, type: 'OLD' },
-            })
-          }>
-          <Text>Chat</Text>
-        </Button>
-      </View>
+      <>
+        <Stack.Screen options={{ headerTitle: name }} />
+        <View className="flex-1">
+          <ChatList data={[]} />
+          <SendFirstMessage receiverId={id} handleSubmit={mutate} />
+        </View>
+      </>
     );
 
   return (

@@ -1,8 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
+import { EnhancedConversationList } from '@/features/home/components/conversations-list';
 import { useAuthStore } from '@/store/auth';
-import { Link, router, Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import { Pressable, View } from 'react-native';
 
 export default function HomeScreen() {
@@ -22,6 +23,12 @@ export default function HomeScreen() {
                   </AvatarFallback>
                 </Avatar>
               </Pressable>
+              <Button
+                className="mr-2"
+                variant={'ghost'}
+                onPress={() => router.push('/(main)/search')}>
+                <Text>Search</Text>
+              </Button>
               <Button onPress={logout} variant={'destructive'}>
                 <Text>Logout</Text>
               </Button>
@@ -30,16 +37,8 @@ export default function HomeScreen() {
           headerTitle: 'Home',
         }}
       />
-      <View className="flex-1 items-center justify-center">
-        <Text>Home Screen</Text>
-
-        <Link href={'/(main)/search'} className="dark:text-white">
-          Search
-        </Link>
-
-        <Link href={'/(main)/chat'} className="dark:text-white">
-          Chat
-        </Link>
+      <View className="flex-1 p-2">
+        <EnhancedConversationList />
       </View>
     </>
   );

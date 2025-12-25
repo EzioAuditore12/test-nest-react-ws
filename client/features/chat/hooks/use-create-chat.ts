@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { router } from 'expo-router';
 
 import { createChatApi } from '../api/create-chat.api';
 
@@ -41,8 +42,15 @@ export const useCreateChat = () => {
         createdAt: new Date(data.createdAt),
         updatedAt: new Date(data.createdAt),
       });
+
+      router.replace({
+        pathname: '/(main)/chat/[id]',
+        params: { id: savedConversation.id, name: savedConversation.contact, type: 'OLD' },
+      });
     },
+
     onError: (error) => {
+      console.log(error)
       alert(error);
     },
   });

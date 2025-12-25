@@ -2,7 +2,7 @@ import * as s from 'standard-parse';
 import { fetch, FetchProps, HttpMethods } from './fetch';
 import { env } from '@/env';
 import { useAuthStore } from '@/store/auth';
-import { refreshAccessToken } from './token-manager'; 
+import { refreshAccessToken } from './token-manager';
 
 interface AuthenticatedFetchProps extends Omit<FetchProps, 'body' | 'method'> {
   baseUrl?: string;

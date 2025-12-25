@@ -3,7 +3,11 @@ import { HydratedDocument, Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Chat {
-  @Prop({ type: Types.ObjectId, required: true, index: true })
+  @Prop({
+    type: Types.ObjectId,
+    required: true,
+    index: true,
+  })
   conversationId: Types.ObjectId;
 
   @Prop({ required: true })
