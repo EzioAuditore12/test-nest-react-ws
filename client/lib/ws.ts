@@ -17,7 +17,6 @@ export function connectWebSocket() {
   }
 
   const socket = io(env.SOCKET_URL, {
-    transports: ['websocket'],
     auth: {
       token: accessToken,
     },
@@ -67,6 +66,7 @@ interface events {
   roomNotice: (username: string | undefined) => void;
   chatMessage: ({ text, sender }: { text: string; sender: string }) => void;
   typing: (username: string | undefined) => void;
+  'online:users': (users: string[]) => void; // Add this line
 }
 
 export type Socket = SocketType<events>;

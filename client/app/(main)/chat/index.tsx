@@ -19,6 +19,7 @@ export default function ChatScreen() {
 
   const [messages, setMessages] = useState<Message[] | []>([]);
   const [typers, setTypers] = useState<(string | undefined)[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]); // Add state
 
   const socket = useRef<Socket | null>(null);
 
@@ -63,6 +64,12 @@ export default function ChatScreen() {
           setTypers((prev) => prev.filter((u) => u !== username));
         }, 3000);
       });
+
+      // Add listener for online users
+      socket.current?.on('online:users', (users) => {
+        console.log('Online users:', users);
+        setOnlineUsers(users);
+      });
     });
 
     return () => {
@@ -70,6 +77,7 @@ export default function ChatScreen() {
       socket.current?.off('roomNotice');
       socket.current?.off('chatMessage');
       socket.current?.off('typing');
+      socket.current?.off('online:users'); // Clean up
     };
   }, [user?.name]);
 
@@ -101,7 +109,8 @@ export default function ChatScreen() {
     <>
       <Stack.Screen
         options={{
-          headerTitle: 'Group Chat',
+          // Update title to show count
+          headerTitle: `Group Chat (${onlineUsers.length})`,
           headerRight: () => (
             <Text className="text-xs text-gray-500">
               {typers.length > 0 && `${typers.join(', ')} is typing...`}

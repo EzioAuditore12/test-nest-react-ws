@@ -7,14 +7,13 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { Logger, UnauthorizedException, UseGuards } from '@nestjs/common'; // Removed UseGuards
+import { Logger } from '@nestjs/common'; // Removed UseGuards
 import { JwtService } from '@nestjs/jwt';
 import type {
   AuthenticatedSocket,
   AuthJwtPayload,
   SocketError,
 } from 'src/auth/types/auth-jwt.payload';
-import { WsJwtGuard } from 'src/auth/guards/ws-jwt.guard';
 
 // 1. REMOVE @UseGuards(WsJwtGuard)
 @WebSocketGateway()
@@ -23,6 +22,8 @@ export class ChatGateway
 {
   @WebSocketServer() server: Server;
   ROOM_NAME = 'GROUP';
+
+  ONLINE_USERS = new Map<string, string>();
 
   constructor(private readonly jwtService: JwtService) {}
 
@@ -58,15 +59,38 @@ export class ChatGateway
     });
   }
 
-  handleConnection(client: Socket) {
-    Logger.log('Client has been connected', client.id);
+  handleConnection(client: AuthenticatedSocket) {
+    const userId = client.handshake.user.id;
+
+    if (!userId) {
+      client.disconnect();
+      return;
+    }
+
+    const newSocketId = client.id;
+
+    this.ONLINE_USERS.set(userId, newSocketId);
+
+    this.server.emit('online:users', Array.from(this.ONLINE_USERS.keys()));
   }
 
-  handleDisconnect() {
-    Logger.log('client has been disconnected');
+  handleDisconnect(client: AuthenticatedSocket) {
+    const userId = client.handshake.user.id;
+
+    const newSocketId = client.id;
+
+    if (this.ONLINE_USERS.get(userId) === newSocketId) {
+      if (userId) this.ONLINE_USERS.delete(userId);
+
+      this.server.emit('online:users', Array.from(this.ONLINE_USERS.keys()));
+    }
+
+    Logger.log('socket disconnected', {
+      userId,
+      newSocketId,
+    });
   }
 
-  @UseGuards(WsJwtGuard)
   @SubscribeMessage('joinRoom')
   async handleJoinRoom(client: AuthenticatedSocket, username: string) {
     // 3. You can still access the user because the Middleware attached it!
@@ -82,7 +106,7 @@ export class ChatGateway
     client: AuthenticatedSocket,
     payload: { data: string; sender: string },
   ) {
-    // No CPU overhead here anymore. We trust the socket.
+    Logger.log(payload);
     client.to(this.ROOM_NAME).emit('chatMessage', payload);
   }
 
