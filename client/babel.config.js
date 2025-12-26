@@ -5,6 +5,6 @@ module.exports = function (api) {
       ['@babel/plugin-proposal-decorators', { legacy: true }],
       ["react-native-worklets-core/plugin"], 
     ],
-    presets: [['babel-preset-expo', { jsxImportSource: 'nativewind' }], 'nativewind/babel'],
+    presets: [['babel-preset-expo']],
   };
 };

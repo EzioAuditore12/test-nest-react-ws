@@ -1,9 +1,7 @@
-import { fetch as ExpoFetch, FetchRequestInit } from 'expo/fetch';
-import { Platform } from 'react-native';
-import { fetch as NitroFetch } from 'react-native-nitro-fetch';
-import * as s from 'standard-parse';
+import { FetchRequestInit } from 'expo/fetch';
 
-export const fetch = Platform.OS === 'web' ? ExpoFetch : NitroFetch;
+import { fetch } from 'react-native-nitro-fetch';
+import * as s from 'standard-parse';
 
 export type FetchProps = FetchRequestInit;
 
@@ -19,6 +17,8 @@ interface TypedFetchProps<S extends s.StandardSchemaV1> extends Omit<
   params?: object;
   body?: object;
 }
+
+export { fetch };
 
 export const typedFetch = async <S extends s.StandardSchemaV1>({
   url,
