@@ -30,6 +30,7 @@ function ConversationList({
   data,
   ...props
 }: ConversationListProps) {
+
   return (
     <>
       <FlashList
@@ -41,8 +42,8 @@ function ConversationList({
             className="mb-3"
             onPress={() =>
               router.push({
-                pathname: '/chat/[id]',
-                params: { id: item.id, name: item.contact, type: 'OLD' },
+                pathname: '/(main)/chat/[id]',
+                params: { id: item.id, name: item.contact , receiverId: item.user.id },
               })
             }
           />

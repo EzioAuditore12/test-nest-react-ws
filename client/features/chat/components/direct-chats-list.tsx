@@ -1,6 +1,5 @@
 import { DirectChat } from '@/db/models/direct-chat.model';
 import { FlashList, FlashListProps } from '@shopify/flash-list';
-import { useMemo } from 'react';
 import { withObservables } from '@nozbe/watermelondb/react';
 import { Q } from '@nozbe/watermelondb';
 
@@ -16,11 +15,9 @@ interface DirectChatListProps extends Omit<FlashListProps<DirectChat>, 'data' | 
 }
 
 function DirectChatList({ className, data, ...props }: DirectChatListProps) {
-  const reversedChats = useMemo(() => [...data].reverse(), [data]);
-
   return (
     <FlashList
-      data={reversedChats}
+      data={data}
       className={cn('p-2', className)}
       maintainVisibleContentPosition={{
         autoscrollToBottomThreshold: 0.2,
@@ -42,8 +39,7 @@ const enhance = withObservables(
       .get<DirectChat>(DIRECT_CHAT_TABLE_NAME)
       .query(Q.where('conversation_id', conversationId))
       .observe(),
-  }),
+  })
 );
-
 
 export const EnhancedDirectChatList = enhance(DirectChatList);

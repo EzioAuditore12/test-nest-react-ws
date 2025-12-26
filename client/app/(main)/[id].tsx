@@ -46,15 +46,15 @@ export default function UserDetails() {
               params: {
                 id: existingConversation.id,
                 name: existingConversation.contact,
-                type: 'OLD',
+                receiverId: existingConversation.user.id,
               },
             });
             return;
           }
 
           router.push({
-            pathname: '/(main)/chat/[id]',
-            params: { id: data.id, name: data.name, type: 'NEW' },
+            pathname: '/(main)/new-chat/[id]',
+            params: { id: data.id, name: data.name },
           });
         }}>
         <Text>Start Chat</Text>

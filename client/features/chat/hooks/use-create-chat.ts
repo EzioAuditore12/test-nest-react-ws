@@ -25,7 +25,7 @@ export const useCreateChat = () => {
       });
 
       const savedConversation = await conversationRepository.create({
-        id: data._id,
+        id: data.conversationId,
         contact: savedReceiver.name,
         userId: savedReceiver.id,
         createdAt: new Date(data.createdAt),
@@ -45,12 +45,16 @@ export const useCreateChat = () => {
 
       router.replace({
         pathname: '/(main)/chat/[id]',
-        params: { id: savedConversation.id, name: savedConversation.contact, type: 'OLD' },
+        params: {
+          id: savedConversation.id,
+          name: savedConversation.contact,
+          receiverId: savedConversation.user.id,
+        },
       });
     },
 
     onError: (error) => {
-      console.log(error)
+      console.log(error);
       alert(error);
     },
   });

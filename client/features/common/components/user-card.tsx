@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
 
-import type { User } from '../schemas/user.schema';
+import type { User } from '@/features/auth/common/schemas/user.schema';
 
 interface UserCardProps extends ComponentProps<typeof Card> {
   data: User;
