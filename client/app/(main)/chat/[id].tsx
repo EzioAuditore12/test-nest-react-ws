@@ -1,12 +1,12 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 
-import { Text } from '@/components/ui/text';
-
 import { ChatList } from '@/features/chat/components/chat-list';
 import { SendFirstMessage } from '@/features/chat/components/send-message';
 
 import { useCreateChat } from '@/features/chat/hooks/use-create-chat';
+
+import { EnhancedDirectChatList } from '@/features/chat/components/direct-chats-list';
 
 export default function DirectChatScreen() {
   const { id, name, type } = useLocalSearchParams() as unknown as {
@@ -31,8 +31,9 @@ export default function DirectChatScreen() {
   return (
     <>
       <Stack.Screen options={{ headerTitle: name, animation: 'none' }} />
-      <View className="flex-1 items-center justify-center">
-        <Text>{id} Old Chat</Text>
+      <View className="flex-1">
+        <EnhancedDirectChatList conversationId={id} />
+        <SendFirstMessage receiverId={id} handleSubmit={mutate} />
       </View>
     </>
   );
