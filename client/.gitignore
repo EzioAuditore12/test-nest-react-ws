@@ -41,3 +41,6 @@ app-example
 # generated native folders
 /ios
 /android
+
+knozichat-demo-firebase-adminsdk-fbsvc-9cbd269281.json
+google-services.json

@@ -1,6 +1,8 @@
 import { Text } from '@/components/ui/text';
+
 import { RegisterForm } from '@/features/auth/register/components/register-form';
 import { useRegister } from '@/features/auth/register/hooks/use-register';
+
 import { Link } from 'expo-router';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 

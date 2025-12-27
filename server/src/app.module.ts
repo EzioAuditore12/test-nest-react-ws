@@ -11,6 +11,7 @@ import { UserModule } from './user/user.module';
 import { typeOrmConfig } from './configs/db/typeorm.config';
 import { mongooseConfig } from './configs/db/mongoose.config';
 import { ChatModule } from './chat/chat.module';
+import Expo from 'expo-server-sdk';
 
 @Module({
   imports: [
@@ -22,6 +23,6 @@ import { ChatModule } from './chat/chat.module';
     ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, Expo],
 })
 export class AppModule {}

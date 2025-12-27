@@ -12,6 +12,7 @@
       "supportsTablet": true
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -40,7 +41,9 @@
           }
         }
       ],
-      ["@lovesworking/watermelondb-expo-plugin-sdk-52-plus"],
+      [
+        "@lovesworking/watermelondb-expo-plugin-sdk-52-plus"
+      ],
       [
         "expo-build-properties",
         {
@@ -48,7 +51,10 @@
             "extraPods": [
               {
                 "name": "simdjson",
-                "configurations": ["Debug", "Release"],
+                "configurations": [
+                  "Debug",
+                  "Release"
+                ],
                 "path": "../node_modules/@nozbe/simdjson",
                 "modular_headers": true
               }
@@ -56,7 +62,9 @@
           },
           "android": {
             "packagingOptions": {
-              "pickFirst": ["**/libc++_shared.so"]
+              "pickFirst": [
+                "**/libc++_shared.so"
+              ]
             }
           }
         }
@@ -65,6 +73,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "fdc11093-11c1-430e-ab54-1ac762130b78"
+      }
+    },
+    "owner": "dakshpurohit"
   }
 }
