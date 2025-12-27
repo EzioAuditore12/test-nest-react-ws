@@ -50,7 +50,6 @@ export default function DirectChatScreen() {
 
     // Emit with an Acknowledgement Callback
     socket.current.emit('chatMessage', text, async (response) => {
-
       const directChatRepository = new DirectChatRepository();
 
       // Save your OWN message to local DB
@@ -72,7 +71,7 @@ export default function DirectChatScreen() {
       <Stack.Screen options={{ headerTitle: name, animation: 'none' }} />
       <View className="flex-1">
         <EnhancedDirectChatList conversationId={id} />
-        <SendDirectMessage className='items-center' handleSubmit={onSend} />
+        <SendDirectMessage className="items-center" handleSubmit={onSend} />
       </View>
     </>
   );

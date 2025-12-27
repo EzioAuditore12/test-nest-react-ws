@@ -28,7 +28,7 @@ export default function UserDetails() {
 
   return (
     <ScrollView
-    className='flex-1'
+      className="flex-1"
       style={{ marginTop: safeAreaInsets.top }}
       contentContainerClassName="items-center justify-center gap-y-2 p-2">
       <UserProfile className="w-full max-w-md" data={data} />

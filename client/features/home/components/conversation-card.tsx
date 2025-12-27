@@ -44,14 +44,12 @@ export function ConversationCard({
           <View className="flex-col">
             <Text variant={'h3'}>{contact}</Text>
 
-            <Text>
-              {use.name}
-            </Text>
+            <Text>{use.name}</Text>
 
             <Text>{user.username}</Text>
           </View>
         </CardContent>
-        <Text className="ml-auto mr-2">
+        <Text className="mr-2 ml-auto">
           {updatedAt.toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit',

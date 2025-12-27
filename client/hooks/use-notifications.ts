@@ -14,10 +14,10 @@ Notifications.setNotificationHandler({
 });
 
 interface UseNotificationProps {
-  data: Notifications.NotificationContentInput
+  data: Notifications.NotificationContentInput;
 }
 
-export function useNotifications({data}: UseNotificationProps) {
+export function useNotifications({ data }: UseNotificationProps) {
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(
     undefined

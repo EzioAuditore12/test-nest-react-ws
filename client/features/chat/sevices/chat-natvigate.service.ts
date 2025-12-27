@@ -12,6 +12,4 @@ export const navigateToChat = async (receiverId: string) => {
       pathname: '/(main)/chat/[id]',
       params: { id: existingConversation.id },
     });
-
-  
 };

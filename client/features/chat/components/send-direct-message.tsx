@@ -21,11 +21,7 @@ interface SendDirectMessageProps extends ViewProps {
   handleSubmit: (text: string) => void;
 }
 
-export function SendDirectMessage({
-  className,
-  handleSubmit,
-  ...props
-}: SendDirectMessageProps) {
+export function SendDirectMessage({ className, handleSubmit, ...props }: SendDirectMessageProps) {
   const { height } = useGradualAnimation();
 
   const keyboardPadding = useAnimatedStyle(() => {

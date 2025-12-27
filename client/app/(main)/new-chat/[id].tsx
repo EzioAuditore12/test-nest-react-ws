@@ -18,8 +18,10 @@ export default function NewDirectChatScreen() {
     <>
       <Stack.Screen options={{ headerTitle: name }} />
       <View className="flex-1">
-        <View className="flex-1 justify-center items-center">
-          <Text variant={'h2'} className='text-center'>Start a fresh new chat with ${name}</Text>
+        <View className="flex-1 items-center justify-center">
+          <Text variant={'h2'} className="text-center">
+            Start a fresh new chat with ${name}
+          </Text>
         </View>
         <SendFirstMessage receiverId={id} handleSubmit={mutate} />
       </View>
