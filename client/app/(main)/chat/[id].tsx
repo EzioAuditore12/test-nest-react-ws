@@ -72,7 +72,7 @@ export default function DirectChatScreen() {
       <Stack.Screen options={{ headerTitle: name, animation: 'none' }} />
       <View className="flex-1">
         <EnhancedDirectChatList conversationId={id} />
-        <SendDirectMessage handleSubmit={onSend} />
+        <SendDirectMessage className='items-center' handleSubmit={onSend} />
       </View>
     </>
   );
