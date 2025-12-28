@@ -2,15 +2,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { EnhancedConversationList } from '@/features/home/components/conversations-list';
-import { usePushNotification } from '@/hooks/use-push-notifications';
 import { useAuthStore } from '@/store/auth';
 import { router, Stack } from 'expo-router';
 import { Pressable, View } from 'react-native';
 
 export default function HomeScreen() {
   const { logout, user } = useAuthStore((state) => state);
-
-  const {} = usePushNotification();
 
   return (
     <>

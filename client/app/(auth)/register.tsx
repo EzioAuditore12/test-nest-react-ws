@@ -2,7 +2,7 @@ import { Text } from '@/components/ui/text';
 
 import { RegisterForm } from '@/features/auth/register/components/register-form';
 import { useRegister } from '@/features/auth/register/hooks/use-register';
-import { usePushNotification } from '@/hooks/use-push-notifications';
+import { useDeviceConfigStore } from '@/store/device';
 
 import { Link } from 'expo-router';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
@@ -10,7 +10,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 export default function RegisterScreen() {
   const { mutate, isPending } = useRegister();
 
-  const { expoPushToken } = usePushNotification();
+  const { expoPushToken } = useDeviceConfigStore((state) => state);
 
   return (
     <KeyboardAwareScrollView contentContainerClassName="flex-1 p-2 gap-y-3 justify-center items-center">

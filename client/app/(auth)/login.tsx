@@ -2,7 +2,7 @@ import { Text } from '@/components/ui/text';
 
 import { LoginForm } from '@/features/auth/login/components/login-form';
 import { useLogin } from '@/features/auth/login/hooks/use-login';
-import { usePushNotification } from '@/hooks/use-push-notifications';
+import { useDeviceConfigStore } from '@/store/device';
 
 import { Link } from 'expo-router';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
@@ -10,7 +10,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 export default function LoginScreen() {
   const { mutate, isPending } = useLogin();
 
-  const { expoPushToken } = usePushNotification();
+  const { expoPushToken } = useDeviceConfigStore((state) => state);
 
   return (
     <KeyboardAwareScrollView contentContainerClassName="flex-1 p-2 justify-center items-center gap-y-5">

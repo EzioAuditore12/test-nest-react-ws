@@ -47,6 +47,16 @@ export const typedFetch = async <S extends s.StandardSchemaV1>({
     ...props,
   });
 
+  if (!response.ok) {
+    const errorBody = await response.text();
+    try {
+      const errorJson = JSON.parse(errorBody);
+      throw new Error(errorJson.message || JSON.stringify(errorJson));
+    } catch {
+      throw new Error(errorBody || response.statusText);
+    }
+  }
+
   const json = await response.json();
 
   const result = s.safeParse(schema, json);

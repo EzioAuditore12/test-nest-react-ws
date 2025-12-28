@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import { loginParamSchema, type LoginParam } from '../schemas/login-param.schema';
 
 interface LoginFormProps extends ViewProps {
-  expoPushToken: string;
+  expoPushToken: string | null;
   handleSumit: (data: LoginParam) => void;
   isSubmitting: boolean;
 }
@@ -36,8 +36,8 @@ export function LoginForm({
   });
 
   const onSubmit = (data: LoginParam) => {
-    if (!(expoPushToken.length === 0)) data.expoPushToken = expoPushToken;
-
+    if (expoPushToken !== null) data.expoPushToken = expoPushToken;
+    
     handleSumit(data);
   };
 
