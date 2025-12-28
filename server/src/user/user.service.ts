@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PaginateQuery, PaginationType, paginate } from 'nestjs-paginate';
+import { Expo } from 'expo-server-sdk';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
@@ -25,6 +26,13 @@ export class UserService {
   async findOneByUserName(username: string) {
     const user = await this.userRepository.findOne({ where: { username } });
     return user;
+  }
+
+  async updateExpoPushToken(userId: string, expoPushToken: string | undefined) {
+    if (!Expo.isExpoPushToken(expoPushToken))
+      throw new BadRequestException('Given token is invalid');
+
+    await this.userRepository.update(userId, { expoPushToken });
   }
 
   async findAll(query: PaginateQuery) {

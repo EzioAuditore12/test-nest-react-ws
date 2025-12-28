@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsStrongPassword, MaxLength } from 'class-validator';
+import { IsOptional, IsStrongPassword, MaxLength } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ maxLength: 16, example: 'example1' })
@@ -20,4 +20,12 @@ export class CreateUserDto {
   })
   @MaxLength(16)
   password: string;
+
+  @ApiProperty({
+    example: 'ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]',
+    nullable: true,
+    required: false,
+  })
+  @IsOptional()
+  expoPushToken?: string;
 }

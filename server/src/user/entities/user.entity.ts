@@ -32,4 +32,7 @@ export class User {
   @UpdateDateColumn()
   @Expose()
   updatedAt: Date;
+
+  @Column({ nullable: true, type: 'text' })
+  expoPushToken?: string;
 }

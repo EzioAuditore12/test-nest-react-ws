@@ -35,7 +35,7 @@ export class AuthService {
   ) {}
 
   async registerUser(registerUserDto: RegisterUserDto) {
-    const { username, password } = registerUserDto;
+    const { username, password, expoPushToken } = registerUserDto;
 
     const existingUser = await this.userSerice.findOneByUserName(username);
 
@@ -50,13 +50,16 @@ export class AuthService {
       password: hashedPassword,
     });
 
+    if (expoPushToken !== undefined && expoPushToken !== null)
+      await this.userSerice.updateExpoPushToken(createdUser.id, expoPushToken);
+
     return plainToInstance(User, createdUser, {
       excludeExtraneousValues: true,
     });
   }
 
   async validateUser(loginUserDto: LoginUserDto) {
-    const { username, password } = loginUserDto;
+    const { username, password, expoPushToken } = loginUserDto;
 
     const user = await this.userSerice.findOneByUserName(username);
 
@@ -69,6 +72,9 @@ export class AuthService {
       throw new UnauthorizedException(
         'Either entered username or passsword is wrong',
       );
+
+    if (expoPushToken !== undefined && expoPushToken !== null)
+      await this.userSerice.updateExpoPushToken(user.id, expoPushToken);
 
     return plainToInstance(User, user, {
       excludeExtraneousValues: true,

@@ -26,7 +26,7 @@ export const usePushNotification = () => {
     };
   }, []);
 
-  console.log('Expo push token', expoPushToken);
+  console.log('Expo push token', expoPushToken.length);
   console.log(notification);
 
   return {

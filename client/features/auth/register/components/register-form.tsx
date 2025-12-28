@@ -10,12 +10,19 @@ import { cn } from '@/lib/utils';
 
 import { registerParamSchema, type RegisterParam } from '../schemas/register-param.schema';
 
-interface LoginFormProps extends ViewProps {
+interface RegisterFormProps extends ViewProps {
+  expoPushToken: string;
   handleSumit: (data: RegisterParam) => void;
   isSubmitting: boolean;
 }
 
-export function RegisterForm({ className, handleSumit, isSubmitting, ...props }: LoginFormProps) {
+export function RegisterForm({
+  className,
+  expoPushToken,
+  handleSumit,
+  isSubmitting,
+  ...props
+}: RegisterFormProps) {
   const {
     control,
     formState: { errors },
@@ -29,6 +36,8 @@ export function RegisterForm({ className, handleSumit, isSubmitting, ...props }:
   });
 
   const onSubmit = (data: RegisterParam) => {
+    if (!(expoPushToken.length === 0)) data.expoPushToken = expoPushToken;
+
     handleSumit(data);
   };
 

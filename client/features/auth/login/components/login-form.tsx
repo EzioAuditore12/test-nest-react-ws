@@ -11,11 +11,18 @@ import { cn } from '@/lib/utils';
 import { loginParamSchema, type LoginParam } from '../schemas/login-param.schema';
 
 interface LoginFormProps extends ViewProps {
+  expoPushToken: string;
   handleSumit: (data: LoginParam) => void;
   isSubmitting: boolean;
 }
 
-export function LoginForm({ className, handleSumit, isSubmitting, ...props }: LoginFormProps) {
+export function LoginForm({
+  className,
+  expoPushToken,
+  handleSumit,
+  isSubmitting,
+  ...props
+}: LoginFormProps) {
   const {
     control,
     formState: { errors },
@@ -29,6 +36,8 @@ export function LoginForm({ className, handleSumit, isSubmitting, ...props }: Lo
   });
 
   const onSubmit = (data: LoginParam) => {
+    if (!(expoPushToken.length === 0)) data.expoPushToken = expoPushToken;
+
     handleSumit(data);
   };
 
