@@ -69,10 +69,9 @@ export class DirectChatGateway
   async handleChatMessage(client: AuthenticatedSocket, text: string) {
     const userId = client.handshake.user.id;
     const roomId = client.handshake.query.conversationId as string;
-    const receiverId = client.handshake.query.receiverId as string;
 
-    const createdChat = await this.chatService.create(userId, {
-      receiverId,
+    const createdChat = await this.chatService.insertChat(userId, {
+      conversationId: roomId,
       text,
     });
 

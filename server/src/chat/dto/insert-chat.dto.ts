@@ -6,9 +6,6 @@ export class InsertChatDto {
   @IsObjectId()
   conversationId: string;
 
-  @IsUUID()
-  receiverId: string;
-
   @IsString()
   @MinLength(1)
   @MaxLength(1000)

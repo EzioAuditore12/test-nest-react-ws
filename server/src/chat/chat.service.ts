@@ -1,7 +1,8 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import Expo from 'expo-server-sdk';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 import { Chat, ChatDocument } from './entities/chat.entity';
 import { CreateChatDto } from './dto/create-chat.dto';
@@ -12,6 +13,9 @@ import {
   ConversationDocument,
 } from './entities/conversation.entity';
 
+import { SEND_NOTIFICATION_QUEUE_NAME } from './workers/send-notification.worker';
+import { PushNotificationDto } from 'src/common/dto/push-notification.dto';
+
 @Injectable()
 export class ChatService {
   constructor(
@@ -19,8 +23,9 @@ export class ChatService {
     private readonly conversationModel: Model<ConversationDocument>,
     @InjectModel(Chat.name)
     private readonly chatModel: Model<ChatDocument>,
+    @InjectQueue(SEND_NOTIFICATION_QUEUE_NAME)
+    private readonly sendNotificationQueue: Queue,
     private readonly userService: UserService,
-    private readonly expo: Expo,
   ) {}
 
   async create(senderId: string, createChatDto: CreateChatDto) {
@@ -47,6 +52,16 @@ export class ChatService {
       conversationId: conversation._id,
     });
 
+    if (existingUser.expoPushToken) {
+      const ticket: PushNotificationDto = {
+        expoPushToken: existingUser.expoPushToken,
+        title: 'Message Request',
+        body: text,
+        metadata: {},
+      };
+      await this.sendNotificationQueue.add('process', ticket);
+    }
+
     // Optional: Update last message in conversation for "Inbox" preview
     await this.conversationModel.findByIdAndUpdate(conversation._id, {
       lastMessage: text,
@@ -59,23 +74,21 @@ export class ChatService {
   async insertChat(senderId: string, insertChatDto: InsertChatDto) {
     const { conversationId, text } = insertChatDto;
 
-    // 1. Verify Conversation exists
-    const conversation = await this.conversationModel.findById(conversationId);
+    // 1. Lightweight check (Optional if you trust the client)
+    const exists = await this.conversationModel.exists({ _id: conversationId });
+    if (!exists) throw new NotFoundException('No such conversation found');
 
-    if (!conversation)
-      throw new NotFoundException('No such conversation found');
-
-    // 2. Create Message
-    const insertedMessage = await this.chatModel.create({
-      senderId,
-      text,
-      conversationId: conversation._id,
-    });
-
-    // Optional: Update last message
-    await this.conversationModel.findByIdAndUpdate(conversation._id, {
-      lastMessage: text,
-    });
+    // 2. Run Create and Update in parallel
+    const [insertedMessage] = await Promise.all([
+      this.chatModel.create({
+        senderId,
+        text,
+        conversationId,
+      }),
+      this.conversationModel.findByIdAndUpdate(conversationId, {
+        lastMessage: text,
+      }),
+    ]);
 
     Logger.log(insertedMessage);
     return insertedMessage;
