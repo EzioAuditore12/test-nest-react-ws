@@ -18,7 +18,10 @@ import {
   Conversation,
   ConversationSchema,
 } from './entities/conversation.entity';
-import { SEND_NOTIFICATION_QUEUE_NAME } from './workers/send-notification.worker';
+import {
+  SEND_NOTIFICATION_QUEUE_NAME,
+  SendNotificationQueue,
+} from './workers/send-notification.worker';
 
 @Module({
   imports: [
@@ -32,6 +35,12 @@ import { SEND_NOTIFICATION_QUEUE_NAME } from './workers/send-notification.worker
     BullModule.registerQueue({ name: SEND_NOTIFICATION_QUEUE_NAME }),
   ],
   controllers: [ChatController],
-  providers: [DirectChatGateway, ChatService, UserService, Expo],
+  providers: [
+    DirectChatGateway,
+    ChatService,
+    UserService,
+    Expo,
+    SendNotificationQueue,
+  ],
 })
 export class ChatModule {}
