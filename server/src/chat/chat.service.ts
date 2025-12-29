@@ -72,7 +72,7 @@ export class ChatService {
   }
 
   async insertChat(senderId: string, insertChatDto: InsertChatDto) {
-    const { conversationId, text } = insertChatDto;
+    const { conversationId, text, _id, createdAt } = insertChatDto;
 
     // 1. Lightweight check (Optional if you trust the client)
     const exists = await this.conversationModel.exists({ _id: conversationId });
@@ -81,9 +81,11 @@ export class ChatService {
     // 2. Run Create and Update in parallel
     const [insertedMessage] = await Promise.all([
       this.chatModel.create({
+        _id,
         senderId,
         text,
         conversationId,
+        createdAt,
       }),
       this.conversationModel.findByIdAndUpdate(conversationId, {
         lastMessage: text,

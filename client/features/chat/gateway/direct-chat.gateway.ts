@@ -5,6 +5,8 @@ import { env } from '@/env';
 import { useAuthStore } from '@/store/auth';
 import { handleWsTokenRefresh, type SocketError } from './ws-token-refresh';
 import { type CreateChatResponse } from '../schemas/create-chat/create-chat-response.schema';
+import { InsertChatParam } from '../schemas/insert-chat/insert-chat.params';
+import { InsertChatResponse } from '../schemas/insert-chat/insert-chat-response.schema';
 
 // Events sent FROM the server TO the client
 interface ServerToClientEvents {
@@ -14,8 +16,11 @@ interface ServerToClientEvents {
 // Events sent FROM the client TO the server
 interface ClientToServerEvents {
   joinRoom: () => void;
-  // Update this line to include the callback
-  chatMessage: (text: string, callback: (data: CreateChatResponse) => void) => void;
+  // filepath: d:\FullStack_Placement_Projects\KnoziChat\test-nest-react-ws\client\features\chat\gateway\direct-chat.gateway.ts
+  chatMessage: (
+    insertChatParam: InsertChatParam,
+    callback: (data: InsertChatResponse) => void
+  ) => void;
 }
 
 export function connectDirectChatWebSocket({

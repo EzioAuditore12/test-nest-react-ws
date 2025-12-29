@@ -16,12 +16,21 @@ import {
 } from '../schemas/send-message/send-message-param.schema';
 
 import { Text } from '@/components/ui/text';
+import { SendMessageEventProps } from '../gateway/events/send-message.event';
 
 interface SendDirectMessageProps extends ViewProps {
-  handleSubmit: (text: string) => void;
+  conversationId: string;
+  socket: SendMessageEventProps['socket'];
+  handleSubmit: (data: SendMessageEventProps) => void;
 }
 
-export function SendDirectMessage({ className, handleSubmit, ...props }: SendDirectMessageProps) {
+export function SendDirectMessage({
+  className,
+  socket,
+  conversationId,
+  handleSubmit,
+  ...props
+}: SendDirectMessageProps) {
   const { height } = useGradualAnimation();
 
   const keyboardPadding = useAnimatedStyle(() => {
@@ -45,7 +54,11 @@ export function SendDirectMessage({ className, handleSubmit, ...props }: SendDir
   const onSubmit = (data: SendMessageParam) => {
     reset();
 
-    handleSubmit(data.text);
+    handleSubmit({
+      socket,
+      conversationId,
+      text: data.text,
+    });
   };
 
   return (

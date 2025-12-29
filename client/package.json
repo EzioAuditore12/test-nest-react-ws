@@ -24,6 +24,7 @@
     "@shopify/flash-list": "2.0.2",
     "@tanstack/react-query": "^5.90.12",
     "arktype": "^2.1.29",
+    "bson-objectid": "^2.0.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "expo": "~54.0.30",

@@ -10,6 +10,7 @@ import { Server } from 'socket.io';
 
 import type { AuthenticatedSocket } from 'src/auth/types/auth-jwt.payload';
 import { ChatService } from './chat.service';
+import { InsertChatDto } from './dto/insert-chat.dto'; // Ensure this is imported
 
 import { WSAuthMiddleware } from 'src/auth/middlewares/ws-auth.middleware';
 import { Logger } from '@nestjs/common';
@@ -66,19 +67,19 @@ export class DirectChatGateway
   }
 
   @SubscribeMessage('chatMessage')
-  async handleChatMessage(client: AuthenticatedSocket, text: string) {
+  async handleChatMessage(
+    client: AuthenticatedSocket,
+    payload: InsertChatDto, // 1. Accept the full DTO object
+  ) {
     const userId = client.handshake.user.id;
-    const roomId = client.handshake.query.conversationId as string;
 
-    const createdChat = await this.chatService.insertChat(userId, {
-      conversationId: roomId,
-      text,
-    });
+    // 2. Pass the full payload (including _id and createdAt) to the service
+    const createdChat = await this.chatService.insertChat(userId, payload);
 
-    // Send to the receiver
-    client.to(roomId).emit('chatMessage', createdChat);
+    // 3. Send to the receiver (using conversationId from payload)
+    client.to(payload.conversationId).emit('chatMessage', createdChat);
 
-    // RETURN the data to send it back to the sender (Acknowledgement)
-    return createdChat;
+    // 4. RETURN the status object. This becomes the 'response' in the frontend callback.
+    return { status: 'ok', data: createdChat };
   }
 }

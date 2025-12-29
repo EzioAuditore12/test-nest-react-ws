@@ -1,15 +1,13 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import { EnhancedDirectChatList } from '@/features/chat/components/direct-chats-list';
 import { SendDirectMessage } from '@/features/chat/components/send-direct-message';
 
-import {
-  connectDirectChatWebSocket,
-  type DirectChatSocket,
-} from '@/features/chat/gateway/direct-chat.gateway';
-import { DirectChatRepository } from '@/db/repositories/direct-chat';
+import type { DirectChatSocket } from '@/features/chat/gateway/direct-chat.gateway';
+import { useReceiveMessages } from '@/features/chat/gateway/events/receive-messages.event';
+import { sendMessageEvent } from '@/features/chat/gateway/events/send-message.event';
 
 export default function DirectChatScreen() {
   const { id, name, receiverId } = useLocalSearchParams() as unknown as {
@@ -19,59 +17,19 @@ export default function DirectChatScreen() {
   };
   const socket = useRef<DirectChatSocket | null>(null);
 
-  useEffect(() => {
-    // 1. Connect
-    socket.current = connectDirectChatWebSocket({ conversationId: id, receiverId });
-
-    // 2. Listen
-    socket.current.on('chatMessage', async (data) => {
-      const directChatRepository = new DirectChatRepository();
-      await directChatRepository.create({
-        _id: data._id,
-        conversationId: id,
-        isDelivered: false,
-        isSeen: false,
-        mode: 'RECEIVED',
-        text: data.text,
-        createdAt: new Date(data.createdAt),
-        updatedAt: new Date(data.createdAt),
-      });
-    });
-
-    // 3. CLEANUP: Disconnect the socket when leaving the screen
-    return () => {
-      socket.current?.disconnect();
-      socket.current = null;
-    };
-  }, [id, receiverId]);
-
-  const onSend = (text: string) => {
-    if (!socket.current) return;
-
-    // Emit with an Acknowledgement Callback
-    socket.current.emit('chatMessage', text, async (response) => {
-      const directChatRepository = new DirectChatRepository();
-
-      // Save your OWN message to local DB
-      await directChatRepository.create({
-        _id: response._id, // Use the real ID from server
-        conversationId: id,
-        isDelivered: false, // It's sent, but maybe not delivered to user yet
-        isSeen: false,
-        mode: 'SENT', // Important: Mark as SENT
-        text: response.text,
-        createdAt: new Date(response.createdAt),
-        updatedAt: new Date(response.createdAt),
-      });
-    });
-  };
+  useReceiveMessages({ socket, receiverId, conversationId: id });
 
   return (
     <>
       <Stack.Screen options={{ headerTitle: name, animation: 'none' }} />
       <View className="flex-1">
         <EnhancedDirectChatList conversationId={id} />
-        <SendDirectMessage className="items-center" handleSubmit={onSend} />
+        <SendDirectMessage
+          socket={socket}
+          conversationId={id}
+          className="items-center"
+          handleSubmit={sendMessageEvent}
+        />
       </View>
     </>
   );

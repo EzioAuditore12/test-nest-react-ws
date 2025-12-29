@@ -23,7 +23,7 @@ export default function NewDirectChatScreen() {
             Start a fresh new chat with ${name}
           </Text>
         </View>
-        <SendFirstMessage className='items-center' receiverId={id} handleSubmit={mutate} />
+        <SendFirstMessage className="items-center" receiverId={id} handleSubmit={mutate} />
       </View>
     </>
   );

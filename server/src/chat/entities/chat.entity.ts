@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: { createdAt: false, updatedAt: true } })
 export class Chat {
   @Prop({
     type: Types.ObjectId,
@@ -22,6 +22,9 @@ export class Chat {
 
   @Prop({ type: Boolean, default: false })
   seen: boolean;
+
+  @Prop({ type: Date, default: Date.now })
+  createdAt: Date;
 }
 
 export const ChatSchema = SchemaFactory.createForClass(Chat);

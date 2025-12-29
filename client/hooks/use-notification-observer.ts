@@ -1,6 +1,6 @@
-import * as Notifications from "expo-notifications";
-import { router, useRootNavigationState } from "expo-router";
-import { useEffect, useState } from "react";
+import * as Notifications from 'expo-notifications';
+import { router, useRootNavigationState } from 'expo-router';
+import { useEffect, useState } from 'react';
 
 export function useNotificationObserver() {
   const rootNavigationState = useRootNavigationState();
@@ -12,12 +12,10 @@ export function useNotificationObserver() {
     if (
       lastNotificationResponse &&
       lastNotificationResponse.notification.request.content.data?.url &&
-      lastNotificationResponse.actionIdentifier ===
-        Notifications.DEFAULT_ACTION_IDENTIFIER
+      lastNotificationResponse.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER
     ) {
-      const url =
-        lastNotificationResponse.notification.request.content.data.url;
-      if (typeof url === "string") {
+      const url = lastNotificationResponse.notification.request.content.data.url;
+      if (typeof url === 'string') {
         setPendingUrl(url);
       }
     }
@@ -25,14 +23,12 @@ export function useNotificationObserver() {
 
   // 2. Listen for incoming notifications while app is running
   useEffect(() => {
-    const subscription = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        const url = response.notification.request.content.data?.url;
-        if (typeof url === "string") {
-          setPendingUrl(url);
-        }
+    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      const url = response.notification.request.content.data?.url;
+      if (typeof url === 'string') {
+        setPendingUrl(url);
       }
-    );
+    });
 
     return () => {
       subscription.remove();

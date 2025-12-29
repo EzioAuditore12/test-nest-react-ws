@@ -37,7 +37,7 @@ export function LoginForm({
 
   const onSubmit = (data: LoginParam) => {
     if (expoPushToken !== null) data.expoPushToken = expoPushToken;
-    
+
     handleSumit(data);
   };
 
