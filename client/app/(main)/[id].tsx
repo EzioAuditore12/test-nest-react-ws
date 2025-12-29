@@ -2,7 +2,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { View, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { UserProfile } from '@/features/common/components/user-profiler';
+import { UserProfile, UserProfileLoading } from '@/features/common/components/user-profiler';
 
 import { Text } from '@/components/ui/text';
 
@@ -17,7 +17,9 @@ export default function UserDetails() {
 
   const { id } = useLocalSearchParams() as unknown as { id: string };
 
-  const { data } = useGetUser(id);
+  const { data, isLoading } = useGetUser(id);
+
+  if (isLoading) return <UserProfileLoading />;
 
   if (!data)
     return (
@@ -28,9 +30,8 @@ export default function UserDetails() {
 
   return (
     <ScrollView
-      className="flex-1"
       style={{ marginTop: safeAreaInsets.top }}
-      contentContainerClassName="items-center justify-center gap-y-2 p-2">
+      contentContainerClassName="flex-1 items-center justify-center gap-y-2 p-2">
       <UserProfile className="w-full max-w-md" data={data} />
 
       <Button

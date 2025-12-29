@@ -8,7 +8,7 @@ import { ConversationRepository } from '@/db/repositories/conversation';
 import { DirectChatRepository } from '@/db/repositories/direct-chat';
 import { getUserApi } from '@/features/common/api/get-user.api';
 
-export const useCreateChat = () => {
+export const useCreateChat = (receiverId: string) => {
   const userRepository = new UserRepository();
   const conversationRepository = new ConversationRepository();
   const directChatRepository = new DirectChatRepository();
@@ -16,7 +16,7 @@ export const useCreateChat = () => {
   return useMutation({
     mutationFn: createChatApi,
     onSuccess: async (data) => {
-      const receiverDetails = await getUserApi(data.receiverId);
+      const receiverDetails = await getUserApi(receiverId);
 
       const savedReceiver = await userRepository.create({
         ...receiverDetails,
@@ -54,7 +54,6 @@ export const useCreateChat = () => {
     },
 
     onError: (error) => {
-      console.log(error);
       alert(error);
     },
   });

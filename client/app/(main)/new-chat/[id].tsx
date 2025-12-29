@@ -12,7 +12,7 @@ export default function NewDirectChatScreen() {
     name: string;
   };
 
-  const { mutate } = useCreateChat();
+  const { mutate } = useCreateChat(id);
 
   return (
     <>
@@ -23,7 +23,7 @@ export default function NewDirectChatScreen() {
             Start a fresh new chat with ${name}
           </Text>
         </View>
-        <SendFirstMessage receiverId={id} handleSubmit={mutate} />
+        <SendFirstMessage className='items-center' receiverId={id} handleSubmit={mutate} />
       </View>
     </>
   );

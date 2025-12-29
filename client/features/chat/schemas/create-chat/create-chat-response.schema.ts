@@ -6,7 +6,6 @@ export const createChatResponseSchema = type({
   conversationId: objectIdSchema,
   _id: objectIdSchema,
   senderId: 'string.uuid',
-  receiverId: 'string.uuid',
   text: '0 < string <= 1000',
   delivered: 'boolean',
   seen: 'boolean',

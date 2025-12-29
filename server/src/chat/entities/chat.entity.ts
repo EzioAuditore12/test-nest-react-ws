@@ -5,6 +5,7 @@ import { HydratedDocument, Types } from 'mongoose';
 export class Chat {
   @Prop({
     type: Types.ObjectId,
+    ref: 'Conversation',
     required: true,
     index: true,
   })
@@ -12,9 +13,6 @@ export class Chat {
 
   @Prop({ required: true })
   senderId: string;
-
-  @Prop({ required: true })
-  receiverId: string;
 
   @Prop({ type: String, maxLength: 1000, trim: true })
   text: string;

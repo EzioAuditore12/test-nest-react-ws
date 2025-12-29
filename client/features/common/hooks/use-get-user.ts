@@ -4,7 +4,7 @@ import { getUserApi } from '../api/get-user.api';
 import { useRefreshOnFocus } from '@/hooks/use-refresh-on-focus';
 
 export const useGetUser = (id: string) => {
-  const { data, isError, error, refetch } = useQuery({
+  const { data, isError, error, isLoading, refetch } = useQuery({
     queryKey: ['profile', id],
     queryFn: () => getUserApi(id),
   });
@@ -13,6 +13,7 @@ export const useGetUser = (id: string) => {
 
   return {
     data,
+    isLoading,
     isError,
     error,
   };
