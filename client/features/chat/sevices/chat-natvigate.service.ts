@@ -2,14 +2,25 @@ import { router } from 'expo-router';
 
 import { ConversationRepository } from '@/db/repositories/conversation';
 
-export const navigateToChat = async (receiverId: string) => {
+export const navigateToChat = async (receiverId: string, receiverName: string) => {
   const conversationReposiory = new ConversationRepository();
 
   const existingConversation = await conversationReposiory.getConversationWithUserId(receiverId);
 
-  if (existingConversation)
-    router.replace({
+  if (existingConversation) {
+    router.push({
       pathname: '/(main)/chat/[id]',
-      params: { id: existingConversation.id },
+      params: {
+        id: existingConversation.id,
+        name: existingConversation.contact,
+        receiverId: existingConversation.user.id,
+      },
     });
+    return;
+  }
+
+  router.push({
+    pathname: '/(main)/new-chat/[id]',
+    params: { id: receiverId, name: receiverName },
+  });
 };

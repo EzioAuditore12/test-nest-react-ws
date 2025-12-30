@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { View, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -10,7 +10,7 @@ import { useGetUser } from '@/features/common/hooks/use-get-user';
 
 import { Button } from '@/components/ui/button';
 
-import { ConversationRepository } from '@/db/repositories/conversation';
+import { navigateToChat } from '@/features/chat/sevices/chat-natvigate.service';
 
 export default function UserDetails() {
   const safeAreaInsets = useSafeAreaInsets();
@@ -34,31 +34,7 @@ export default function UserDetails() {
       contentContainerClassName="flex-1 items-center justify-center gap-y-2 p-2">
       <UserProfile className="w-full max-w-md" data={data} />
 
-      <Button
-        onPress={async () => {
-          const conversationRepository = new ConversationRepository();
-
-          const existingConversation = await conversationRepository.getConversationWithUserId(id);
-
-          console.log(existingConversation);
-
-          if (existingConversation) {
-            router.push({
-              pathname: '/(main)/chat/[id]',
-              params: {
-                id: existingConversation.id,
-                name: existingConversation.contact,
-                receiverId: existingConversation.user.id,
-              },
-            });
-            return;
-          }
-
-          router.push({
-            pathname: '/(main)/new-chat/[id]',
-            params: { id: data.id, name: data.name },
-          });
-        }}>
+      <Button onPress={async () => await navigateToChat(data.id, data.name)}>
         <Text>Start Chat</Text>
       </Button>
     </ScrollView>
