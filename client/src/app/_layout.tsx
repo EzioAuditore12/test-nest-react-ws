@@ -1,4 +1,4 @@
-import '@/global.css';
+import '../../global.css';
 
 import { useEffect } from 'react';
 import { ThemeProvider } from '@react-navigation/native';
