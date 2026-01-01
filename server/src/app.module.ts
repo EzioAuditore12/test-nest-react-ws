@@ -14,6 +14,7 @@ import { typeOrmConfig } from './configs/db/typeorm.config';
 import { mongooseConfig } from './configs/db/mongoose.config';
 import { ChatModule } from './chat/chat.module';
 import { bullMQConfig } from './configs/bull-mq.config';
+import { SyncModule } from './sync/sync.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { bullMQConfig } from './configs/bull-mq.config';
     UserModule,
     AuthModule,
     ChatModule,
+    SyncModule,
   ],
   controllers: [AppController],
   providers: [AppService, Expo],

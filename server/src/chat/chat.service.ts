@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 
-import { Chat, ChatDocument } from './entities/chat.entity';
+import { DirectChat, DirectChatDocument } from './entities/direct-chat.entity';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UserService } from 'src/user/user.service';
 import { InsertChatDto } from './dto/insert-chat.dto';
@@ -21,8 +21,8 @@ export class ChatService {
   constructor(
     @InjectModel(Conversation.name)
     private readonly conversationModel: Model<ConversationDocument>,
-    @InjectModel(Chat.name)
-    private readonly chatModel: Model<ChatDocument>,
+    @InjectModel(DirectChat.name)
+    private readonly directChatModel: Model<DirectChatDocument>,
     @InjectQueue(SEND_NOTIFICATION_QUEUE_NAME)
     private readonly sendNotificationQueue: Queue,
     private readonly userService: UserService,
@@ -46,7 +46,7 @@ export class ChatService {
     }
 
     // 2. Create Message linked to Conversation
-    const createdMessage = await this.chatModel.create({
+    const createdMessage = await this.directChatModel.create({
       senderId,
       text,
       conversationId: conversation._id,
@@ -80,7 +80,7 @@ export class ChatService {
 
     // 2. Run Create and Update in parallel
     const [insertedMessage] = await Promise.all([
-      this.chatModel.create({
+      this.directChatModel.create({
         _id,
         senderId,
         text,

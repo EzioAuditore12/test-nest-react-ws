@@ -1,5 +1,7 @@
 import { tableSchema } from '@nozbe/watermelondb';
 
+import type { BaseChange, ChangesSchema } from '../types';
+
 export const DIRECT_CHAT_TABLE_NAME = 'direct_chats';
 
 export const DirectChatTable = tableSchema({
@@ -14,3 +16,16 @@ export const DirectChatTable = tableSchema({
     { name: 'updated_at', type: 'number' },
   ],
 });
+
+type DirectChat = {
+  id: string;
+  conversation_id: string;
+  text: string;
+  mode: 'SENT' | 'RECEIVED';
+  is_delivered: boolean;
+  is_seen: boolean;
+  created_at: number;
+  updated_at: number;
+} & BaseChange;
+
+export type DirectChatChangeSchema = ChangesSchema<'direct_chats', DirectChat>;

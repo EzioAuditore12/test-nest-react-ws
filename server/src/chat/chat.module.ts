@@ -13,7 +13,7 @@ import { User } from 'src/user/entities/user.entity';
 import jwtConfig from 'src/auth/configs/jwt.config';
 import { DirectChatGateway } from './direct-chat.gateway';
 
-import { Chat, ChatSchema } from './entities/chat.entity';
+import { DirectChat, DirectChatSchema } from './entities/direct-chat.entity';
 import {
   Conversation,
   ConversationSchema,
@@ -26,7 +26,7 @@ import {
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: Chat.name, schema: ChatSchema },
+      { name: DirectChat.name, schema: DirectChatSchema },
       { name: Conversation.name, schema: ConversationSchema },
     ]),
     TypeOrmModule.forFeature([User]),

@@ -1,11 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In, MoreThan } from 'typeorm';
 import { PaginateQuery, PaginationType, paginate } from 'nestjs-paginate';
 import { Expo } from 'expo-server-sdk';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UserService {
@@ -26,6 +27,21 @@ export class UserService {
   async findOneByUserName(username: string) {
     const user = await this.userRepository.findOne({ where: { username } });
     return user;
+  }
+
+  async findUsersWithChanges(ids: string[], since: Date) {
+    if (ids.length === 0) return [];
+
+    const users = await this.userRepository.find({
+      where: {
+        id: In(ids),
+        updatedAt: MoreThan(since),
+      },
+    });
+
+    return plainToInstance(User, users, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async updateExpoPushToken(userId: string, expoPushToken: string | undefined) {

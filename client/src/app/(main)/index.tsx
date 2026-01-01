@@ -1,13 +1,19 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
+import { syncDatabase } from '@/db/sync';
 import { EnhancedConversationList } from '@/features/home/components/conversations-list';
 import { useAuthStore } from '@/store/auth';
 import { router, Stack } from 'expo-router';
+import { useEffect } from 'react';
 import { Pressable, View } from 'react-native';
 
 export default function HomeScreen() {
   const { logout, user } = useAuthStore((state) => state);
+
+  useEffect(() => {
+    syncDatabase();
+  }, []);
 
   return (
     <>

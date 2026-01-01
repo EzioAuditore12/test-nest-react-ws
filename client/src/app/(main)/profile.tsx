@@ -1,14 +1,22 @@
-import { View } from 'react-native';
+import { ScrollView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { UserProfile } from '@/features/common/components/user-profiler';
+import { UserProfile, UserProfileLoading } from '@/features/common/components/user-profiler';
+
 import { useGetProfile } from '@/features/settings/hooks/use-get-profile';
 
 export default function ProfileScreen() {
-  const { data } = useGetProfile();
+  const safeAreaInsets = useSafeAreaInsets();
+
+  const { data, isLoading } = useGetProfile();
+
+  if (isLoading) return <UserProfileLoading />;
 
   return (
-    <View className="flex-1 items-center justify-center p-2">
+    <ScrollView
+      style={{ marginTop: safeAreaInsets.top }}
+      contentContainerClassName="flex-1 items-center justify-center gap-y-2 p-2">
       <UserProfile className="w-full" data={data} />
-    </View>
+    </ScrollView>
   );
 }

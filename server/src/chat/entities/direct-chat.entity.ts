@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 
-@Schema({ timestamps: { createdAt: false, updatedAt: true } })
-export class Chat {
+@Schema({ timestamps: false })
+export class DirectChat {
   @Prop({
     type: Types.ObjectId,
     ref: 'Conversation',
@@ -25,7 +25,10 @@ export class Chat {
 
   @Prop({ type: Date, default: Date.now })
   createdAt: Date;
+
+  @Prop({ type: Date, default: Date.now() })
+  updatedAt: Date;
 }
 
-export const ChatSchema = SchemaFactory.createForClass(Chat);
-export type ChatDocument = HydratedDocument<Chat>;
+export const DirectChatSchema = SchemaFactory.createForClass(DirectChat);
+export type DirectChatDocument = HydratedDocument<DirectChat>;

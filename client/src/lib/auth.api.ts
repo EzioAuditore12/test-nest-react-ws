@@ -147,9 +147,14 @@ export const authenticatedTypedFetch = async <S extends s.StandardSchemaV1>({
   }
 
   const json = await response.json();
+
+  console.log(json);
+
   const result = s.safeParse(schema, json);
 
   if (result.issues) throw new Error(JSON.stringify(result.issues));
+
+  console.log('Result value', result.value);
 
   return result.value;
 };

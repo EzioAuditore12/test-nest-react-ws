@@ -1,5 +1,4 @@
 import { Database, type TableSchema } from '@nozbe/watermelondb';
-import { createContext, useContext, type PropsWithChildren } from 'react';
 
 import { createAdapter } from './adapter';
 import { migrations } from './migrations';
@@ -24,10 +23,3 @@ export const database = new Database({
   modelClasses: models,
 });
 
-const WatermelonDBContext = createContext(database);
-
-export const WaterMelonDBProvider = ({ children }: PropsWithChildren) => {
-  return <WatermelonDBContext.Provider value={database}>{children}</WatermelonDBContext.Provider>;
-};
-
-export const useDatabase = () => useContext(WatermelonDBContext);
