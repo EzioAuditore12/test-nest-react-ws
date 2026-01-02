@@ -4,6 +4,7 @@ import { User } from '@/db/models/user.model';
 import { USER_TABLE_NAME } from '@/db/tables/user.table';
 
 import type { CreateUserParam } from './schemas/create-user.schema';
+import type { UpdateUser } from './schemas/update-user.schema';
 
 export class UserRepository {
   async create(data: CreateUserParam) {
@@ -18,11 +19,29 @@ export class UserRepository {
     });
   }
 
+  async update(id: string, data: UpdateUser) {
+    return await database.write(async () => {
+      const record = await database.get<User>(USER_TABLE_NAME).find(id);
+
+      await record.update((user) => {
+        Object.entries(data).forEach(([key, value]) => {
+          if (value !== undefined) {
+            (user as any)[key] = value;
+          }
+        });
+      });
+    });
+  }
+
   async findAll() {
     return await database.get<User>(USER_TABLE_NAME).query().fetch();
   }
 
   async findById(id: string) {
-    return await database.get<User>(USER_TABLE_NAME).find(id);
+    try {
+      return await database.get<User>(USER_TABLE_NAME).find(id);
+    } catch {
+      return null;
+    }
   }
 }

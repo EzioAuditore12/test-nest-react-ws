@@ -18,12 +18,25 @@ export const useCreateChat = (receiverId: string) => {
     onSuccess: async (data) => {
       const receiverDetails = await getUserApi(receiverId);
 
-      const savedReceiver = await userRepository.create({
-        ...receiverDetails,
-        createdAt: new Date(receiverDetails.createdAt),
-        updatedAt: new Date(receiverDetails.updatedAt),
-      });
+      // 1. Check if user exists locally to avoid crash
+      let savedReceiver = await userRepository.findById(receiverId);
 
+      if (!savedReceiver) {
+        savedReceiver = await userRepository.create({
+          ...receiverDetails,
+          createdAt: new Date(receiverDetails.createdAt),
+          updatedAt: new Date(receiverDetails.updatedAt),
+        });
+      } else {
+        // Optional: Update user details if they exist
+        await userRepository.update(receiverId, {
+          ...receiverDetails,
+          createdAt: new Date(receiverDetails.createdAt),
+          updatedAt: new Date(receiverDetails.updatedAt),
+        });
+      }
+
+      // 2. Create Conversation (Ensure ID matches server response)
       const savedConversation = await conversationRepository.create({
         id: data.conversationId,
         contact: savedReceiver.name,
@@ -32,6 +45,7 @@ export const useCreateChat = (receiverId: string) => {
         updatedAt: new Date(data.updatedAt),
       });
 
+      // 3. Create the first message
       await directChatRepository.create({
         _id: data._id,
         conversationId: savedConversation.id,

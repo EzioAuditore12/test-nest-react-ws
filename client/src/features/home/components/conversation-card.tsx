@@ -28,7 +28,7 @@ export function ConversationCard({
   onPress,
   ...props
 }: ConversationCardProps) {
-  const { contact, updatedAt } = data;
+  const { updatedAt } = data;
 
   return (
     <Pressable onPress={onPress}>
@@ -42,11 +42,11 @@ export function ConversationCard({
           </Avatar>
 
           <View className="flex-col">
-            <Text variant={'h3'}>{contact}</Text>
+            <Text variant={'h3'}>{user.username}</Text>
 
             <Text>{use.name}</Text>
 
-            <Text>{user.username}</Text>
+            <Text>{user.name}</Text>
           </View>
         </CardContent>
         <Text className="mr-2 ml-auto">

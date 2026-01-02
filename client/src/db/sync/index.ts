@@ -32,10 +32,10 @@ export async function syncDatabase() {
         conversations: {
           created: changes.conversations.created.map((conversation) => ({
             id: conversation._id,
-            contact: conversation.participants[1],
+            contact: conversation.user_id,
             created_at: conversation.createdAt,
             updated_at: conversation.updatedAt,
-            user_id: conversation.participants[1],
+            user_id: conversation.user_id,
           })),
           updated: [],
           deleted: [],
@@ -51,6 +51,8 @@ export async function syncDatabase() {
     },
     pushChanges: async ({ changes }) => {
       const { users, conversations } = changes as Change;
+
+      console.log(users, conversations);
 
       await pushChangesApi({
         users,
