@@ -1,13 +1,7 @@
 import { database } from '@/db';
 import { synchronize } from '@nozbe/watermelondb/sync';
 
-import type { UserChangeSchema } from '../tables/user.table';
-import type { DirectChatChangeSchema } from '../tables/direct-chat.table';
-import type { ConversationChangeSchema } from '../tables/conversation.table';
 import { pullChangesApi } from './api/pull-changes.api';
-import { pushChangesApi } from './api/push-changes.api';
-
-type Change = UserChangeSchema & DirectChatChangeSchema & ConversationChangeSchema;
 
 export async function syncDatabase() {
   await synchronize({
@@ -33,8 +27,8 @@ export async function syncDatabase() {
           created: changes.conversations.created.map((conversation) => ({
             id: conversation._id,
             contact: conversation.participants[1],
-            created_at: conversation.createdAt,
-            updated_at: conversation.updatedAt,
+            created_at: new Date(conversation.createdAt).getTime(),
+            updated_at: new Date(conversation.updatedAt).getTime(),
             user_id: conversation.participants[1],
           })),
           updated: [],
@@ -48,14 +42,6 @@ export async function syncDatabase() {
       };
 
       return { changes: updatedChanges, timestamp };
-    },
-    pushChanges: async ({ changes }) => {
-      const { users, conversations } = changes as Change;
-
-      await pushChangesApi({
-        users,
-        conversations,
-      });
     },
   });
 }

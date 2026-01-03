@@ -12,10 +12,14 @@ type PushChangeBodyParams = {
 
 export const pushChangesApi = async ({ users, conversations }: PushChangeBodyParams) => {
   try {
+    const pushChangeBody = { users, conversations };
+
+    console.log(pushChangeBody);
+
     const test = await authenticatedTypedFetch({
       url: 'sync/push',
       method: 'POST',
-      body: { changes: { users, conversations } },
+      body: { changes: pushChangeBody },
       schema: pushChangesResponseSchema,
     });
 
