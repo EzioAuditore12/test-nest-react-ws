@@ -7,7 +7,7 @@ export const pullChangesResponseSchema = type({
     conversations: conversationsResponseSchema,
     users: usersResponseSchema,
   },
-  timestamp: 'number'
+  timestamp: 'number',
 });
 
 export type PullChangesResponse = typeof pullChangesResponseSchema.infer;

@@ -2,16 +2,17 @@ import { objectIdSchema } from '@/lib/schemas';
 import { type } from 'arktype';
 
 const conversationResponseSchema = type({
-  _id: objectIdSchema,
-  participants: 'string[]',
-  createdAt: 'string.date.iso',
-  updatedAt: 'string.date.iso',
-  __v: 'number',
-  lastMessage: 'string',
+  id: objectIdSchema,
+  contact: 'string',
+  user_id: 'string.uuid',
+  // _status: "'created' | 'updated' | 'deleted'",
+  //_changed: 'string',
+  created_at: 'number',
+  updated_at: 'number',
 });
 
 export const conversationsResponseSchema = type({
   created: conversationResponseSchema.array(),
-  updated: 'Array',
+  updated: conversationResponseSchema.array(),
   deleted: 'string[]',
 });

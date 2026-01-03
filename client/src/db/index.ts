@@ -22,4 +22,3 @@ export const database = new Database({
   adapter: createAdapter(schema, migrations),
   modelClasses: models,
 });
-

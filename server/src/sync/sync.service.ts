@@ -9,9 +9,9 @@ import {
   DirectChat,
   DirectChatDocument,
 } from 'src/chat/entities/direct-chat.entity';
+
 import { UserService } from 'src/user/user.service';
-import { PushChangesDto } from './dto/push-changes/push-changes.dto';
-import { SyncConversationDto } from './dto/sync-conversations.dto';
+import { PullChangesResponseDto } from './dto/pull-changes/pull-changes-response.dto';
 
 @Injectable()
 export class SyncService {
@@ -31,22 +31,18 @@ export class SyncService {
       updatedAt: { $gt: timestamp },
     });
 
-    // Update this query to select participants as well
-    const allUserConversations = await this.conversationModel
-      .find({ participants: userId })
-      .select('_id participants');
+    // Efficiently get all unique participants from conversations involving the user
+    const allParticipants = await this.conversationModel.distinct(
+      'participants',
+      {
+        participants: userId,
+      },
+    );
 
-    // Collect all unique contact IDs from all conversations
-    const contactIds = new Set<string>();
-    allUserConversations.forEach((c) => {
-      c.participants.forEach((p) => {
-        const participantId = p.toString();
-        // Only add if it's not the current user
-        if (participantId !== userId) {
-          contactIds.add(participantId);
-        }
-      });
-    });
+    // Filter out the current user's ID to get only contacts
+    const contactIds = allParticipants
+      .map((p) => p.toString())
+      .filter((pId) => pId !== userId);
 
     // 4. Fetch Users who have changed
     const updatedUsers = await this.userService.findUsersWithChanges(
@@ -57,62 +53,58 @@ export class SyncService {
     return {
       changes: {
         conversations: {
-          created: updatedConversations.filter((c) => c.createdAt > timestamp),
-          updated: updatedConversations.filter(
-            (c) => c.createdAt <= timestamp && c.updatedAt > timestamp,
-          ),
-          deleted: [], // Handle deletions if necessary
+          created: updatedConversations
+            .filter((c) => c.createdAt > timestamp)
+            .map((c) => {
+              return {
+                id: c._id.toString(),
+                contact: c.participants[1],
+                user_id: c.participants[1],
+                updated_at: new Date(c.updatedAt).getTime(),
+                created_at: new Date(c.createdAt).getTime(),
+              };
+            }),
+          updated: updatedConversations
+            .filter((c) => c.createdAt <= timestamp && c.updatedAt > timestamp)
+            .map((c) => {
+              const contactId = c.participants.find((p) => p !== userId) || '';
+              return {
+                id: c._id.toString(),
+                contact: contactId,
+                user_id: contactId,
+                updated_at: new Date(c.updatedAt).getTime(),
+                created_at: new Date(c.createdAt).getTime(),
+              };
+            }),
+          deleted: [],
         },
         users: {
-          created: updatedUsers.filter((u) => u.createdAt > timestamp),
-          updated: updatedUsers.filter(
-            (u) => u.createdAt <= timestamp && u.updatedAt > timestamp,
-          ),
+          created: updatedUsers
+            .filter((u) => u.createdAt > timestamp)
+            .map((u) => {
+              return {
+                id: u.id,
+                name: u.name,
+                username: u.username,
+                created_at: new Date(u.createdAt).getTime(),
+                updated_at: new Date(u.updatedAt).getTime(),
+              };
+            }),
+          updated: updatedUsers
+            .filter((u) => u.createdAt <= timestamp && u.updatedAt > timestamp)
+            .map((u) => {
+              return {
+                id: u.id,
+                name: u.name,
+                username: u.username,
+                created_at: new Date(u.createdAt).getTime(),
+                updated_at: new Date(u.updatedAt).getTime(),
+              };
+            }),
           deleted: [],
         },
       },
       timestamp: Date.now(),
     };
-  }
-
-  async pushChanges(userId: string, pushChangesDto: PushChangesDto) {
-    const { changes } = pushChangesDto;
-
-    if (changes.conversations.created)
-      await this.upsertConversations(userId, changes.conversations.created);
-
-    if (changes.conversations.deleted)
-      await this.deleteConversations(changes.conversations.deleted);
-
-    await this.upsertConversations(userId, changes.conversations.created);
-  }
-
-  private async upsertConversations(
-    currentUserId: string,
-    conversations: SyncConversationDto[],
-  ) {
-    for (const conv of conversations) {
-      // Map Client DTO (snake_case) to Server Entity (camelCase/Schema)
-      // Client: id, user_id (the contact), created_at, updated_at
-      // Server: _id, participants: [me, contact], createdAt, updatedAt
-
-      await this.conversationModel.updateOne(
-        { _id: conv.id },
-        {
-          $set: {
-            // Ensure both participants are in the array
-            participants: [currentUserId, conv.user_id],
-            createdAt: new Date(conv.created_at),
-            updatedAt: new Date(conv.updated_at),
-          },
-        },
-        { upsert: true },
-      );
-    }
-  }
-
-  private async deleteConversations(ids: string[]) {
-    if (ids.length === 0) return;
-    await this.conversationModel.deleteMany({ id: { $in: ids } });
   }
 }

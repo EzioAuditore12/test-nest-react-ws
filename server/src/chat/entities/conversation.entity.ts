@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-@Schema({ timestamps: false })
+@Schema({ timestamps: true })
 export class Conversation {
   // Store both user IDs here.
   // Index this so you can quickly find "Chat between A and B"
@@ -12,10 +12,8 @@ export class Conversation {
   @Prop()
   lastMessage?: string;
 
-  @Prop({ type: Date, default: Date.now })
   createdAt: Date;
 
-  @Prop({ type: Date, default: Date.now() })
   updatedAt: Date;
 }
 

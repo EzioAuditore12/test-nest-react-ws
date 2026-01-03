@@ -28,7 +28,9 @@ export function ConversationCard({
   onPress,
   ...props
 }: ConversationCardProps) {
-  const { contact, updatedAt } = data;
+  // Change this to createdAt if you want to see the creation difference
+  // Or ensure your backend updates 'updatedAt' correctly on new messages
+  const { createdAt, updatedAt } = data;
 
   return (
     <Pressable onPress={onPress}>
@@ -42,19 +44,31 @@ export function ConversationCard({
           </Avatar>
 
           <View className="flex-col">
-            <Text variant={'h3'}>{contact}</Text>
+            <Text variant={'h3'}>{user.username}</Text>
 
             <Text>{use.name}</Text>
 
-            <Text>{user.username}</Text>
+            <Text>{user.name}</Text>
           </View>
         </CardContent>
-        <Text className="mr-2 ml-auto">
-          {updatedAt.toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
-        </Text>
+        <View className="mr-2 ml-auto">
+          <Text>
+            Created At
+            {createdAt.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </Text>
+          <Text>{createdAt.getTime()}</Text>
+          <Text>
+            Updated At
+            {updatedAt.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </Text>
+          <Text>{updatedAt.getTime()}</Text>
+        </View>
       </Card>
     </Pressable>
   );

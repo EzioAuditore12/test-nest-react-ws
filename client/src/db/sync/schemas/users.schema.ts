@@ -2,14 +2,16 @@ import { type } from 'arktype';
 
 const userSchema = type({
   id: 'string.uuid',
-  username: '0 < string <= 50',
   name: '0 < string <= 50',
-  createdAt: 'string.date.iso',
-  updatedAt: 'string.date.iso',
+  username: '0 < string <= 50',
+  //_status: "'created' | 'updated' | 'deleted'",
+  //_changed: 'string',
+  created_at: 'number',
+  updated_at: 'number',
 });
 
 export const usersResponseSchema = type({
-    created: userSchema.array(),
-    updated: 'Array',
-    deleted: 'Array',
-})
+  created: userSchema.array(),
+  updated: 'Array',
+  deleted: 'Array',
+});
