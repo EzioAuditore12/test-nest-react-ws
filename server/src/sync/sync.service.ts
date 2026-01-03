@@ -23,7 +23,10 @@ export class SyncService {
     private readonly userService: UserService,
   ) {}
 
-  async pullChanges(userId: string, lastPulledAt: number) {
+  async pullChanges(
+    userId: string,
+    lastPulledAt: number,
+  ): Promise<PullChangesResponseDto> {
     const timestamp = new Date(lastPulledAt);
 
     const updatedConversations = await this.conversationModel.find({

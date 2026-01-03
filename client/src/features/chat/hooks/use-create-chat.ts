@@ -29,7 +29,7 @@ export const useCreateChat = (receiverId: string) => {
         contact: savedReceiver.name,
         userId: savedReceiver.id,
         createdAt: new Date(data.createdAt),
-        updatedAt: new Date(data.updatedAt),
+        updatedAt: new Date(data.createdAt),
       });
 
       await directChatRepository.create({
@@ -40,7 +40,7 @@ export const useCreateChat = (receiverId: string) => {
         mode: 'SENT',
         text: data.text,
         createdAt: new Date(data.createdAt),
-        updatedAt: new Date(data.createdAt),
+        updatedAt: new Date(data.updatedAt),
       });
 
       router.replace({

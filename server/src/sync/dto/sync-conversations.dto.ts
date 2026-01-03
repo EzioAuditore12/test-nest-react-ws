@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsEnum,
   IsInt,
   IsString,
   IsUUID,
@@ -34,14 +33,6 @@ export class SyncConversationDto {
 
   @IsInt()
   updated_at: number;
-
-  @IsEnum(['created', 'updated', 'deleted'])
-  @ApiProperty({ type: 'string', enum: ['created', 'updated', 'deleted'] })
-  _status: 'created' | 'updated' | 'deleted';
-
-  @IsString()
-  @ApiProperty({ type: 'string', example: 'contact,updated_at' })
-  _changed: string;
 }
 
 export class SyncConversationsDto {
