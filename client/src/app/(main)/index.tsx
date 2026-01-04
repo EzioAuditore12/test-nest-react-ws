@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/auth';
 import { router, Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
+
 export default function HomeScreen() {
   const { logout, user } = useAuthStore((state) => state);
   // Use a version number to force re-renders

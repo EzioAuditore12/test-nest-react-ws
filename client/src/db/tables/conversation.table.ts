@@ -9,7 +9,7 @@ export const ConversationTable = tableSchema({
   columns: [
     { name: 'contact', type: 'string' },
     { name: 'last_message', type: 'string' },
-    { name: 'user_id', type: 'string' },
+    { name: 'user_id', type: 'string', isIndexed: true },
     { name: 'created_at', type: 'number' },
     { name: 'updated_at', type: 'number' },
   ],

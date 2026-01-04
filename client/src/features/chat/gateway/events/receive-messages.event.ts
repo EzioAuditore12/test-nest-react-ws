@@ -2,12 +2,16 @@ import { useEffect, type RefObject } from 'react';
 import { connectDirectChatWebSocket, type DirectChatSocket } from '../direct-chat.gateway';
 
 import { DirectChatRepository } from '@/db/repositories/direct-chat';
+import { ConversationRepository } from '@/db/repositories/conversation';
 
 interface ReceiveMessagesProps {
   socket: RefObject<DirectChatSocket | null>;
   conversationId: string;
   receiverId: string;
 }
+
+const directChatRepository = new DirectChatRepository();
+const conversationRepository = new ConversationRepository();
 
 export const useReceiveMessages = ({
   socket,
@@ -20,7 +24,6 @@ export const useReceiveMessages = ({
 
     // 2. Listen
     socket.current.on('chatMessage', async (data) => {
-      const directChatRepository = new DirectChatRepository();
       await directChatRepository.create({
         _id: data._id,
         conversationId,
@@ -30,6 +33,11 @@ export const useReceiveMessages = ({
         text: data.text,
         createdAt: new Date(data.createdAt),
         updatedAt: new Date(data.createdAt),
+      });
+
+      await conversationRepository.update(conversationId, {
+        lastMessage: data.text,
+        updatedAt: new Date(data.updatedAt),
       });
     });
 

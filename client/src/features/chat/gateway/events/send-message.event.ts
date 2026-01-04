@@ -4,6 +4,7 @@ import ObjectID from 'bson-objectid';
 import type { DirectChatSocket } from '../direct-chat.gateway';
 
 import { DirectChatRepository } from '@/db/repositories/direct-chat';
+import { ConversationRepository } from '@/db/repositories/conversation';
 
 export interface SendMessageEventProps {
   conversationId: string;
@@ -15,7 +16,7 @@ export const sendMessageEvent = async ({ conversationId, socket, text }: SendMes
   if (!socket.current) return;
 
   const directChatRepository = new DirectChatRepository();
-
+  const conversationRepository = new ConversationRepository();
   // 1. Generate ID and Timestamp locally
   const messageId = ObjectID().toHexString();
   const now = new Date();
@@ -39,6 +40,11 @@ export const sendMessageEvent = async ({ conversationId, socket, text }: SendMes
     mode: 'SENT',
     text: text,
     createdAt: now,
+    updatedAt: now,
+  });
+
+  await conversationRepository.update(conversationId, {
+    lastMessage: text,
     updatedAt: now,
   });
 

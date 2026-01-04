@@ -21,6 +21,7 @@ const enhance = withObservables([], () => ({
   data: database
     .get<Conversation>(CONVERSATION_TABLE_NAME)
     .query(Q.sortBy('updated_at', Q.desc))
+    // Use .observe() on Queries. This triggers when any record in the list changes.
     .observe(),
 }));
 
@@ -30,11 +31,12 @@ function ConversationList({
   data,
   ...props
 }: ConversationListProps) {
-
   return (
     <>
       <FlashList
         data={data}
+        // Add extraData to force FlashList to re-render when the data array changes
+        extraData={data}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <EnhancedConversationCard
