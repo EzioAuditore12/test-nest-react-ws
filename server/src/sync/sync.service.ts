@@ -29,6 +29,12 @@ export class SyncService {
   ): Promise<PullChangesResponseDto> {
     const timestamp = new Date(lastPulledAt);
 
+    // Fetch all conversation IDs for the user to ensure we get messages from all their chats
+    const userConversations = await this.conversationModel
+      .find({ participants: userId })
+      .select('_id');
+    const userConversationIds = userConversations.map((c) => c._id);
+
     const updatedConversations = await this.conversationModel.find({
       participants: userId, // MongoDB will match if userId is in the array
       updatedAt: { $gt: timestamp },
@@ -56,23 +62,9 @@ export class SyncService {
     // 1. Fetch messages updated since last pull
     const updatedMessages = await this.directChatModel
       .find({
-        $or: [
-          { senderId: userId },
-          // FIX: We need to find messages in conversations the user is part of
-          // The previous code had 'conversationIds' which was undefined.
-          // We can use the 'updatedConversations' list or fetch all conversation IDs for this user first.
-          // For simplicity/correctness, let's use the conversation IDs we just found + any others the user is in.
-          // Ideally, you'd query: "Find messages where conversationId IN (Select ID from Conversations where participants contains userId)"
-          // Since we don't have SQL joins, we rely on the fact that we fetched 'updatedConversations'.
-          // However, a message might be new in an OLD conversation.
-          // So we should query messages where the conversation involves the user.
-        ],
+        conversationId: { $in: userConversationIds },
         updatedAt: { $gt: timestamp },
       })
-      // We need to filter by conversations the user is actually in.
-      // A better query is:
-      // Find all conversations for this user -> Get IDs -> Find messages in those IDs.
-      // For now, let's assume you fix the query logic.
       .sort({ createdAt: -1 })
       .limit(500);
 
