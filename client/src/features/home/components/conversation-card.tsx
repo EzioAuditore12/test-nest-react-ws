@@ -32,6 +32,8 @@ export function ConversationCard({
   // Or ensure your backend updates 'updatedAt' correctly on new messages
   const { createdAt, updatedAt, lastMessage } = data;
 
+  console.log(data.user.id)
+
   return (
     <Pressable onPress={onPress}>
       <Card className={cn(className)} {...props}>

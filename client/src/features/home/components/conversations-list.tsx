@@ -31,6 +31,9 @@ function ConversationList({
   data,
   ...props
 }: ConversationListProps) {
+
+  console.log(data.map((item)=> item.id))
+
   return (
     <>
       <FlashList

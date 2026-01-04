@@ -20,10 +20,15 @@ export const useReceiveMessages = ({
 }: ReceiveMessagesProps) => {
   useEffect(() => {
     // 1. Connect
-    socket.current = connectDirectChatWebSocket({ conversationId, receiverId });
+    // Only connect if not already connected (optional safety check)
+    if (!socket.current) {
+      socket.current = connectDirectChatWebSocket({ conversationId, receiverId });
+    }
 
     // 2. Listen
     socket.current.on('chatMessage', async (data) => {
+      console.log('Received message:', data); // Debug log
+
       await directChatRepository.create({
         _id: data._id,
         conversationId,
@@ -41,10 +46,13 @@ export const useReceiveMessages = ({
       });
     });
 
-    // 3. CLEANUP: Disconnect the socket when leaving the screen
+    // 3. CLEANUP
     return () => {
-      socket.current?.disconnect();
-      socket.current = null;
+      if (socket.current) {
+        socket.current.disconnect();
+        socket.current = null;
+      }
     };
-  });
+    // Add dependency array so this only runs once on mount/unmount
+  }, [conversationId, receiverId, socket]); // <-- Fixed dependency array
 };

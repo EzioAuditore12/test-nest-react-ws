@@ -37,7 +37,7 @@ const enhance = withObservables(
   ({ conversationId }: { conversationId: string }) => ({
     data: database
       .get<DirectChat>(DIRECT_CHAT_TABLE_NAME)
-      .query(Q.where('conversation_id', conversationId))
+      .query(Q.where('conversation_id', conversationId), Q.sortBy('created_at', Q.asc))
       .observe(),
   })
 );

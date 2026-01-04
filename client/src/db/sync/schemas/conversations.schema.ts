@@ -5,8 +5,6 @@ const conversationResponseSchema = type({
   id: objectIdSchema,
   contact: 'string',
   user_id: 'string.uuid',
-  // _status: "'created' | 'updated' | 'deleted'",
-  //_changed: 'string',
   created_at: 'number',
   updated_at: 'number',
 });

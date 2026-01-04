@@ -45,14 +45,6 @@ export class SyncDirectChatDto {
   @IsInt()
   @ApiProperty({ type: 'number', example: 1704192000 })
   updated_at: number;
-
-  @IsEnum(['created', 'updated', 'deleted'])
-  @ApiProperty({ type: 'string', enum: ['created', 'updated', 'deleted'] })
-  _status: 'created' | 'updated' | 'deleted';
-
-  @IsString()
-  @ApiProperty({ type: 'string', example: 'text,updated_at' })
-  _changed: string;
 }
 
 export class SyncDirectChatsDto {

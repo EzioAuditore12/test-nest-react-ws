@@ -21,14 +21,21 @@ export async function syncDatabase() {
         updatedItems: changes.conversations.updated,
       });
 
-      // Apply fix to users (good practice to handle this too)
+      // Apply fix to users
       const safeUsers = await resolveConflicts({
         database,
         tableName: 'users',
         createdItems: changes.users.created,
         updatedItems: changes.users.updated,
       });
-      // --------------------------------------------------
+
+      // Apply fix to direct_chats
+      const safeDirectChats = await resolveConflicts({
+        database,
+        tableName: 'direct_chats',
+        createdItems: changes.direct_chats.created,
+        updatedItems: changes.direct_chats.updated,
+      });
 
       const updatedChanges = {
         users: {
@@ -42,9 +49,9 @@ export async function syncDatabase() {
           deleted: changes.conversations.deleted,
         },
         direct_chats: {
-          created: [],
-          deleted: [],
-          updated: [],
+          created: safeDirectChats.created,
+          updated: safeDirectChats.updated,
+          deleted: changes.direct_chats.deleted,
         },
       };
 

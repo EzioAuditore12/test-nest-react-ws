@@ -7,6 +7,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useUniwind } from 'uniwind';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { DatabaseProvider } from '@nozbe/watermelondb/react';
 import 'react-native-reanimated';
 
 import { registerForPushNotificationsAsync } from '@/lib/notification';
@@ -15,6 +16,7 @@ import { useDeviceConfigStore } from '@/store/device';
 
 import { NAV_THEME } from '@/lib/theme';
 import { TanstackReactQueryClientProvider } from '@/providers/tanstak-query-client.provider';
+import { database } from '@/db';
 
 export default function RootLayout() {
   const { theme } = useUniwind();
@@ -31,9 +33,11 @@ export default function RootLayout() {
     <ThemeProvider value={NAV_THEME[theme ?? 'light']}>
       <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
       <KeyboardProvider>
-        <TanstackReactQueryClientProvider>
-          <Stack initialRouteName="(main)" screenOptions={{ headerShown: false }} />
-        </TanstackReactQueryClientProvider>
+        <DatabaseProvider database={database}>
+          <TanstackReactQueryClientProvider>
+            <Stack initialRouteName="(main)" screenOptions={{ headerShown: false }} />
+          </TanstackReactQueryClientProvider>
+        </DatabaseProvider>
       </KeyboardProvider>
       <PortalHost />
     </ThemeProvider>

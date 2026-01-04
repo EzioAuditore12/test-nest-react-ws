@@ -3,9 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { syncDatabase } from '@/db/sync';
 import { EnhancedConversationList } from '@/features/home/components/conversations-list';
+import { useRefreshOnFocus } from '@/hooks/use-refresh-on-focus';
 import { useAuthStore } from '@/store/auth';
 import { router, Stack } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 export default function HomeScreen() {
@@ -13,18 +14,25 @@ export default function HomeScreen() {
   // Use a version number to force re-renders
   const [syncVersion, setSyncVersion] = useState(0);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        await syncDatabase();
-      } catch (error) {
-        console.error('Sync failed:', error);
-      } finally {
-        // Increment version to force the list to remount with new data
-        setSyncVersion((v) => v + 1);
-      }
-    })();
+  // 1. Define the sync logic in a reusable function
+  const runSync = useCallback(async () => {
+    try {
+      await syncDatabase();
+    } catch (error) {
+      console.error('Sync failed:', error);
+    } finally {
+      // Increment version to force the list to remount with new data
+      setSyncVersion((v) => v + 1);
+    }
   }, []);
+
+  // 2. Run on initial mount
+  useEffect(() => {
+    runSync();
+  }, [runSync]);
+
+  // 3. Run whenever the screen gains focus (e.g., coming back from chat)
+  useRefreshOnFocus(runSync);
 
   return (
     <>
