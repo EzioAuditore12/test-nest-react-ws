@@ -24,6 +24,11 @@ export class SyncConversationDto {
   @ApiProperty({ example: 'example', maxLength: 50 })
   contact: string;
 
+  @IsString()
+  @MaxLength(1000)
+  @ApiProperty({ example: 'This is a message', maxLength: 1000 })
+  last_message: string;
+
   @IsUUID()
   @ApiProperty({ example: '123e4567-e89b-12d3-XXX4-426614174000' })
   user_id: string;

@@ -59,10 +59,13 @@ export class SyncService {
           created: updatedConversations
             .filter((c) => c.createdAt > timestamp)
             .map((c) => {
+              // FIX: Dynamically find the contact ID (don't assume index 1)
+              const contactId = c.participants.find((p) => p !== userId) || '';
               return {
                 id: c._id.toString(),
-                contact: c.participants[1],
-                user_id: c.participants[1],
+                contact: contactId,
+                user_id: contactId,
+                last_message: c.lastMessage || '',
                 updated_at: new Date(c.updatedAt).getTime(),
                 created_at: new Date(c.createdAt).getTime(),
               };
@@ -74,6 +77,7 @@ export class SyncService {
               return {
                 id: c._id.toString(),
                 contact: contactId,
+                last_message: c.lastMessage || '',
                 user_id: contactId,
                 updated_at: new Date(c.updatedAt).getTime(),
                 created_at: new Date(c.createdAt).getTime(),

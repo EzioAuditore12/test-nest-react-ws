@@ -7,12 +7,17 @@ export const pullChangesApi = async (data: PullChangesQueryParam) => {
   if (data.lastPulledAt === null) data.lastPulledAt = 0;
 
   try {
-    return await authenticatedTypedFetch({
+    const response = await authenticatedTypedFetch({
       url: 'sync/pull',
       method: 'GET',
       params: data,
       schema: pullChangesResponseSchema,
     });
+
+    console.log(response.changes.conversations.created);
+
+    console.log(response.changes.conversations.updated);
+    return response;
   } catch (error) {
     if (error instanceof Error) throw error;
     throw new Error(String(error));

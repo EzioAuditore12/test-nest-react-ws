@@ -6,6 +6,7 @@ export const createConversationParamSchema = type({
   id: objectIdSchema,
   userId: 'string.uuid',
   contact: phoneSchema,
+  lastMessage: 'string',
   createdAt: 'Date',
   updatedAt: 'Date',
 });

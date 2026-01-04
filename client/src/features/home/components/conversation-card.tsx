@@ -1,5 +1,5 @@
 import { withObservables } from '@nozbe/watermelondb/react';
-import { use, type ComponentProps } from 'react';
+import { type ComponentProps } from 'react';
 import { Pressable, View, type PressableProps } from 'react-native';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -30,7 +30,7 @@ export function ConversationCard({
 }: ConversationCardProps) {
   // Change this to createdAt if you want to see the creation difference
   // Or ensure your backend updates 'updatedAt' correctly on new messages
-  const { createdAt, updatedAt } = data;
+  const { createdAt, updatedAt, lastMessage } = data;
 
   return (
     <Pressable onPress={onPress}>
@@ -46,9 +46,9 @@ export function ConversationCard({
           <View className="flex-col">
             <Text variant={'h3'}>{user.username}</Text>
 
-            <Text>{use.name}</Text>
-
             <Text>{user.name}</Text>
+
+            <Text>{lastMessage}</Text>
           </View>
         </CardContent>
         <View className="mr-2 ml-auto">

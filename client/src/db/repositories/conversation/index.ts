@@ -13,9 +13,10 @@ export class ConversationRepository {
       return await database.get<Conversation>(CONVERSATION_TABLE_NAME).create((conversation) => {
         conversation._raw.id = data.id;
         conversation.contact = data.contact;
+        conversation.lastMessage = data.lastMessage;
         conversation._setRaw('user_id', data.userId);
-        conversation.createdAt = new Date(data.createdAt);
-        conversation.updatedAt = new Date(data.updatedAt);
+        conversation.createdAt = data.createdAt;
+        conversation.updatedAt = data.updatedAt;
       });
     });
   }

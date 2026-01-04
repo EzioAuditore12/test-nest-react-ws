@@ -5,14 +5,24 @@ import { syncDatabase } from '@/db/sync';
 import { EnhancedConversationList } from '@/features/home/components/conversations-list';
 import { useAuthStore } from '@/store/auth';
 import { router, Stack } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
-
 export default function HomeScreen() {
   const { logout, user } = useAuthStore((state) => state);
+  // Use a version number to force re-renders
+  const [syncVersion, setSyncVersion] = useState(0);
 
   useEffect(() => {
-    syncDatabase();
+    (async () => {
+      try {
+        await syncDatabase();
+      } catch (error) {
+        console.error('Sync failed:', error);
+      } finally {
+        // Increment version to force the list to remount with new data
+        setSyncVersion((v) => v + 1);
+      }
+    })();
   }, []);
 
   return (
@@ -44,7 +54,8 @@ export default function HomeScreen() {
         }}
       />
       <View className="flex-1 p-2">
-        <EnhancedConversationList />
+        {/* The key prop forces re-mounting of the EnhancedConversationList on syncVersion change */}
+        <EnhancedConversationList key={syncVersion} />
       </View>
     </>
   );

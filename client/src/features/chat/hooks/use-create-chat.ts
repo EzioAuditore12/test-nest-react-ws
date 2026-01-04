@@ -28,6 +28,7 @@ export const useCreateChat = (receiverId: string) => {
         id: data.conversationId,
         contact: savedReceiver.name,
         userId: savedReceiver.id,
+        lastMessage: data.text,
         createdAt: new Date(data.createdAt),
         updatedAt: new Date(data.createdAt),
       });

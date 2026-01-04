@@ -35,6 +35,9 @@ export class Conversation extends Model {
   @text('contact')
   contact!: string;
 
+  @text('last_message')
+  lastMessage!: string;
+
   @date('created_at')
   createdAt!: Date;
 

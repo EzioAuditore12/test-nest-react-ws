@@ -84,11 +84,11 @@ export class ChatService {
         _id,
         senderId,
         text,
-        conversationId,
-        createdAt,
+        conversationId: new Types.ObjectId(conversationId),
       }),
       this.conversationModel.findByIdAndUpdate(conversationId, {
         lastMessage: text,
+        createdAt: new Date(createdAt),
       }),
     ]);
 
